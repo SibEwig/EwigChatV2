@@ -7,7 +7,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -15,7 +14,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
 
     override val authState: Flow<AuthState> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            val user = auth.currentUser
+            val user = firebaseAuth.currentUser
             trySend(
                 if (user == null) {
                     AuthState.Unauthorized
@@ -46,7 +45,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     }
 
     override suspend fun register(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password).await()
     }
 
     override suspend fun logout() {

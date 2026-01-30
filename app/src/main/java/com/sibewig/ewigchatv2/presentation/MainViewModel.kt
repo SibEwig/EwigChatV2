@@ -10,14 +10,12 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
-    authRepository: AuthRepository
-) : ViewModel() {
+class MainViewModel @Inject constructor(repository: AuthRepository) : ViewModel() {
 
-    val authState = authRepository.authState
+    val authState = repository.authState
         .stateIn(
             scope = viewModelScope,
-            initialValue = AuthState.Initial,
-            started = SharingStarted.WhileSubscribed(5_000)
+            started = SharingStarted.Eagerly,
+            initialValue = AuthState.Initial
         )
 }

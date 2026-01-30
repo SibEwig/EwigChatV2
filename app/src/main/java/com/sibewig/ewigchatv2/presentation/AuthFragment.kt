@@ -4,17 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.databinding.FragmentAuthBinding
-import com.sibewig.ewigchatv2.domain.AuthState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,7 +34,7 @@ class AuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
-        collectAuthState()
+        collectAuthScreenState()
     }
 
     override fun onDestroyView() {
@@ -47,29 +42,27 @@ class AuthFragment : Fragment() {
         _binding = null
     }
 
-    private fun collectAuthState() {
+    private fun collectAuthScreenState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.authState.collect { authState ->
-                    val navController = findNavController()
-                    if (navController.currentDestination?.id != R.id.authFragment) return@collect
-                    when (authState) {
-                        is AuthState.Authorized -> {
-                            navController.navigate(R.id.action_authFragment_to_chatsFragment)
+                viewModel.authScreenState.collect { authScreenState ->
+                    with(binding) {
+                        if (authScreenState.isLoading) {
+                            progressBar.visibility = View.VISIBLE
+                            buttonLogin.isEnabled = false
+                            buttonRegister.isEnabled = false
+                        } else {
+                            progressBar.visibility = View.GONE
+                            buttonLogin.isEnabled = true
+                            buttonRegister.isEnabled = true
                         }
-
-                        is AuthState.Unauthorized -> {
-
-                        }
-
-                        AuthState.Initial -> {
-
-                        }
+                        textViewError.text = authScreenState.error ?: ""
                     }
                 }
             }
         }
     }
+
 
     private fun setupClickListeners() {
         with(binding) {
