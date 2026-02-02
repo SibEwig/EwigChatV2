@@ -8,4 +8,5 @@
     <string name="login">Login</string>
     <string name="hello_blank_chats_fragment">Hello blank chats fragment</string>
     <string name="logout_button">Logout</string>
+    <string name="avatar">avatar</string>
 </resources>
