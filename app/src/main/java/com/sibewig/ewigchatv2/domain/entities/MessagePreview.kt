@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.domain
+package com.sibewig.ewigchatv2.domain.entities
 
 data class MessagePreview(
     val text: String,

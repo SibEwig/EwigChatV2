@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.presentation
+package com.sibewig.ewigchatv2.presentation.chats
 
 import android.os.Bundle
 import android.view.LayoutInflater

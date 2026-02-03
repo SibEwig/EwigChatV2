@@ -1,7 +1,7 @@
 package com.sibewig.ewigchatv2.data
 
 import com.google.firebase.auth.FirebaseAuth
-import com.sibewig.ewigchatv2.domain.AuthRepository
+import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import com.sibewig.ewigchatv2.domain.AuthState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

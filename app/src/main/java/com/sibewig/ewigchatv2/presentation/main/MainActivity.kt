@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.presentation
+package com.sibewig.ewigchatv2.presentation.main
 
 import android.os.Bundle
 import android.util.Log

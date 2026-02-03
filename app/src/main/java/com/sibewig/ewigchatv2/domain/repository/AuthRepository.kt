@@ -1,5 +1,6 @@
-package com.sibewig.ewigchatv2.domain
+package com.sibewig.ewigchatv2.domain.repository
 
+import com.sibewig.ewigchatv2.domain.AuthState
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

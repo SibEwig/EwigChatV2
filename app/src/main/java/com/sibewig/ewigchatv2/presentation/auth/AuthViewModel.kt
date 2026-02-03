@@ -1,9 +1,14 @@
-package com.sibewig.ewigchatv2.presentation
+package com.sibewig.ewigchatv2.presentation.auth
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sibewig.ewigchatv2.domain.AuthScreenState
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.sibewig.ewigchatv2.presentation.auth.AuthScreenState
 import com.sibewig.ewigchatv2.domain.usecases.LoginUseCase
 import com.sibewig.ewigchatv2.domain.usecases.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,19 +58,19 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun mapAuthError(e: Exception): String = when (e) {
-        is com.google.firebase.auth.FirebaseAuthWeakPasswordException ->
+        is FirebaseAuthWeakPasswordException ->
             "Слишком слабый пароль (минимум 6 символов)."
 
-        is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
+        is FirebaseAuthInvalidCredentialsException ->
             "Неверный email или пароль."
 
-        is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
+        is FirebaseAuthInvalidUserException ->
             "Пользователь не найден. Проверь email."
 
-        is com.google.firebase.auth.FirebaseAuthUserCollisionException ->
+        is FirebaseAuthUserCollisionException ->
             "Этот email уже зарегистрирован."
 
-        is com.google.firebase.FirebaseNetworkException ->
+        is FirebaseNetworkException ->
             "Проблема с сетью. Проверь интернет."
 
         else -> "Не удалось выполнить авторизацию. Попробуй ещё раз."

@@ -1,6 +1,4 @@
-package com.sibewig.ewigchatv2.domain
-
-import java.util.Calendar
+package com.sibewig.ewigchatv2.domain.entities
 
 data class Message(
     val id: String,

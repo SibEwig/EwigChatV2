@@ -1,9 +1,9 @@
-package com.sibewig.ewigchatv2.presentation
+package com.sibewig.ewigchatv2.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sibewig.ewigchatv2.domain.AuthRepository
 import com.sibewig.ewigchatv2.domain.AuthState
+import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

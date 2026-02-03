@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.presentation
+package com.sibewig.ewigchatv2.presentation.chats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

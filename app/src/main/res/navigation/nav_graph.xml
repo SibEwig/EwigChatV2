@@ -6,12 +6,12 @@
     app:startDestination="@id/authFragment">
     <fragment
         android:id="@+id/authFragment"
-        android:name="com.sibewig.ewigchatv2.presentation.AuthFragment"
+        android:name="com.sibewig.ewigchatv2.presentation.auth.AuthFragment"
         android:label="fragment_auth"
         tools:layout="@layout/fragment_auth" />
     <fragment
         android:id="@+id/chatsFragment"
-        android:name="com.sibewig.ewigchatv2.presentation.ChatsFragment"
+        android:name="com.sibewig.ewigchatv2.presentation.chats.ChatsFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" />
 </navigation>
