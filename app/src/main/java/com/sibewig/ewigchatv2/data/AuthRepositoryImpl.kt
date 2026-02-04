@@ -1,8 +1,8 @@
 package com.sibewig.ewigchatv2.data
 
 import com.google.firebase.auth.FirebaseAuth
-import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import com.sibewig.ewigchatv2.domain.AuthState
+import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -50,5 +50,6 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
 
     override suspend fun logout() {
         auth.signOut()
+
     }
 }
