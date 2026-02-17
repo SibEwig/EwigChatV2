@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.domain.entities
+package com.sibewig.ewigchatv2.domain.entity
 
 data class Chat(
     val id: String,

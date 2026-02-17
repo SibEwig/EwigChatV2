@@ -1,6 +1,6 @@
 package com.sibewig.ewigchatv2.domain.usecases
 
-import com.sibewig.ewigchatv2.domain.entities.Chat
+import com.sibewig.ewigchatv2.domain.entity.Chat
 import com.sibewig.ewigchatv2.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

@@ -1,12 +1,12 @@
 package com.sibewig.ewigchatv2.domain.usecases
 
 import com.sibewig.ewigchatv2.domain.repository.ChatRepository
-import com.sibewig.ewigchatv2.domain.entities.OutgoingMessage
+import com.sibewig.ewigchatv2.domain.entity.OutgoingMessage
 import javax.inject.Inject
 
 class SendMessageUseCase @Inject constructor(private val repository: ChatRepository) {
 
-    suspend operator fun invoke(msg: OutgoingMessage) {
-        repository.sendMessage(msg)
+    suspend operator fun invoke(chatId: String, msg: String) {
+        repository.sendMessage(chatId, msg)
     }
 }

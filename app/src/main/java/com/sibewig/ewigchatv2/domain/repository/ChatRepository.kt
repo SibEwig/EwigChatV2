@@ -1,16 +1,15 @@
 package com.sibewig.ewigchatv2.domain.repository
 
-import com.sibewig.ewigchatv2.domain.entities.Chat
-import com.sibewig.ewigchatv2.domain.entities.Message
-import com.sibewig.ewigchatv2.domain.entities.OutgoingMessage
+import com.sibewig.ewigchatv2.domain.entity.Chat
+import com.sibewig.ewigchatv2.domain.entity.Message
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
 
-    suspend fun sendMessage(msg: OutgoingMessage)
+    suspend fun sendMessage(chatId: String, msg: String)
 
-    fun observeChats(uid: String): Flow<List<Chat>>
+    fun observeChats(myUid: String): Flow<List<Chat>>
 
-    fun observeMessages(chatID: String): Flow<List<Message>>
+    fun observeMessages(chatId: String): Flow<List<Message>>
 
 }

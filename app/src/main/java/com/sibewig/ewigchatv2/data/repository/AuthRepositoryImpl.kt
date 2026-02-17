@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.data
+package com.sibewig.ewigchatv2.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.sibewig.ewigchatv2.domain.AuthState
@@ -50,6 +50,5 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
 
     override suspend fun logout() {
         auth.signOut()
-
     }
 }
