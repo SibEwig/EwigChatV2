@@ -45,18 +45,21 @@ class AuthFragment : Fragment() {
     private fun collectAuthScreenState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.authScreenState.collect { authScreenState ->
+                viewModel.authScreenState.collect { state ->
                     with(binding) {
-                        if (authScreenState.isLoading) {
-                            progressBar.visibility = View.VISIBLE
-                            buttonLogin.isEnabled = false
-                            buttonRegister.isEnabled = false
+
+                        val loading = state.isLoading
+                        progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+                        buttonLogin.isEnabled = !loading
+                        buttonRegister.isEnabled = !loading
+
+                        val error = state.error
+                        if (error.isNullOrBlank()) {
+                            textViewError.visibility = View.GONE
                         } else {
-                            progressBar.visibility = View.GONE
-                            buttonLogin.isEnabled = true
-                            buttonRegister.isEnabled = true
+                            textViewError.visibility = View.VISIBLE
+                            textViewError.text = error
                         }
-                        textViewError.text = authScreenState.error ?: ""
                     }
                 }
             }
@@ -67,13 +70,13 @@ class AuthFragment : Fragment() {
     private fun setupClickListeners() {
         with(binding) {
             buttonRegister.setOnClickListener {
-                val email = editTextEmail.text.trim().toString()
-                val password = editTextPassword.text.trim().toString()
+                val email = editTextEmail.text?.trim().toString()
+                val password = editTextPassword.text?.trim().toString()
                 viewModel.onRegister(email, password)
             }
             buttonLogin.setOnClickListener {
-                val email = editTextEmail.text.trim().toString()
-                val password = editTextPassword.text.trim().toString()
+                val email = editTextEmail.text?.trim().toString()
+                val password = editTextPassword.text?.trim().toString()
                 viewModel.onLogin(email, password)
             }
         }
