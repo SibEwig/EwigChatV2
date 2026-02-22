@@ -12,14 +12,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sibewig.ewigchatv2.databinding.FragmentChatsBinding
 import com.sibewig.ewigchatv2.presentation.adapters.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -50,12 +48,19 @@ class ChatsFragment : Fragment() {
             insets
         }
 
+        setupClickListeners()
+        collectUiState()
+        setupRecyclerView()
+    }
+
+    private fun setupClickListeners() {
         binding.buttonLogout.setOnClickListener {
             viewModel.onLogout()
         }
-
-        collectUiState()
-        setupRecyclerView()
+        adapter.onChatClickListener = {
+            val direction = ChatsFragmentDirections.actionChatsFragmentToChatFragment(it)
+            findNavController().navigate(direction)
+        }
     }
 
     private fun setupRecyclerView() {

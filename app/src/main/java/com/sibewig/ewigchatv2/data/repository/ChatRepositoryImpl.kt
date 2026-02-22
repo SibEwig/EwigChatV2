@@ -33,9 +33,9 @@ class ChatRepositoryImpl @Inject constructor(
 
         val currentServerTime = FieldValue.serverTimestamp()
 
-        val members = chatId.split("_")
-        require(members.size == 2) { "Invalid chatId format: $chatId" }
-        val normalizedChatId = members.sorted().joinToString("_")
+        val normalizedChatId = normalizeChatId(chatId)
+
+        val members = normalizedChatId.split("_")
 
         val msgData = mapOf(
             "senderId" to user.uid,
@@ -59,6 +59,8 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override fun observeChats(myUid: String): Flow<List<Chat>> = callbackFlow {
+
+        Log.d("ChatRepositoryImpl", "Trying to observe chats for myUid: $myUid")
 
         val query = chatsCollection
             .whereArrayContains("members", myUid)
@@ -84,8 +86,12 @@ class ChatRepositoryImpl @Inject constructor(
 
     override fun observeMessages(chatId: String): Flow<List<Message>> = callbackFlow {
 
+        val normalizedChatId = normalizeChatId(chatId)
+
+        Log.d("ChatRepositoryImpl", "Trying to observe messages for chatId: $normalizedChatId")
+
         val query = chatsCollection
-            .document(chatId)
+            .document(normalizedChatId)
             .collection("messages")
             .orderBy("createdAt")
 
@@ -98,12 +104,18 @@ class ChatRepositoryImpl @Inject constructor(
 
                 val messages = snapshot 
                     ?.toObjects(MessageDTO::class.java)
-                    ?.map { it.toDomain(chatId) }
+                    ?.map { it.toDomain(normalizedChatId) }
                     .orEmpty() 
 
                 trySend(messages) 
             }
 
         awaitClose { registration.remove() } 
+    }
+
+    private fun normalizeChatId(chatId: String): String {
+        val parts = chatId.split("_")
+        require(parts.size == 2) { "Invalid chatId format: $chatId" }
+        return parts.sorted().joinToString("_")
     }
 }

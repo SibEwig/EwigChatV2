@@ -12,6 +12,8 @@ import java.util.Locale
 
 class ChatAdapter : ListAdapter<Chat, ChatAdapter.ChatViewHolder>(ChatDiffCallback) {
 
+    var onChatClickListener: ((String) -> Unit)? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -33,6 +35,9 @@ class ChatAdapter : ListAdapter<Chat, ChatAdapter.ChatViewHolder>(ChatDiffCallba
             textViewContactName.text = chat.interlocutor.name.take(15)
             textViewLastMessage.text = chat.lastMessage?.text
             textViewTime.text = chat.lastMessage?.timestamp?.toChatTime()
+            containerChat.setOnClickListener {
+                onChatClickListener?.invoke(chat.id)
+            }
         }
     }
 

@@ -13,5 +13,18 @@
         android:id="@+id/chatsFragment"
         android:name="com.sibewig.ewigchatv2.presentation.chats.ChatsFragment"
         android:label="fragment_chats"
-        tools:layout="@layout/fragment_chats" />
+        tools:layout="@layout/fragment_chats">
+        <action
+            android:id="@+id/action_chatsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.sibewig.ewigchatv2.presentation.chats.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="chatId"
+            app:argType="string" />
+    </fragment>
 </navigation>
