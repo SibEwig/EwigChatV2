@@ -32,7 +32,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authScreenState.update { it.copy(isLoading = true) }
             try {
-                registerUseCase(email, password)
+                registerUseCase(email, password, null, null)
             } catch (e: Exception) {
                 Log.d("AuthViewModel", e.toString())
                 _authScreenState.update { it.copy(isLoading = false, error = mapAuthError(e)) }
