@@ -41,16 +41,18 @@ class ChatsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupWindowInsets()
+        setupClickListeners()
+        collectUiState()
+        setupRecyclerView()
+    }
 
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(top = systemBars.top + (8 * resources.displayMetrics.density).toInt())
             insets
         }
-
-        setupClickListeners()
-        collectUiState()
-        setupRecyclerView()
     }
 
     private fun setupClickListeners() {
