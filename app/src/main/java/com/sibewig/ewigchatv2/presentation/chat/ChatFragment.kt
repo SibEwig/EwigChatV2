@@ -1,7 +1,6 @@
-package com.sibewig.ewigchatv2.presentation.chats
+package com.sibewig.ewigchatv2.presentation.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sibewig.ewigchatv2.databinding.FragmentChatBinding
+import com.sibewig.ewigchatv2.presentation.adapters.MessageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,6 +26,8 @@ class ChatFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentChatBinding == null")
 
     private val viewModel: ChatViewModel by viewModels()
+
+    private val adapter = MessageAdapter()
 
 
     override fun onCreateView(
@@ -38,16 +41,39 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupWindowInsets()
+        setupRecyclerView()
+        collectUiState()
+
+    }
+
+    private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(top = systemBars.top + (8 * resources.displayMetrics.density).toInt())
             insets
         }
+    }
 
+    private fun setupRecyclerView() {
+        with(binding) {
+            recyclerViewMessages.adapter = adapter
+            recyclerViewMessages.layoutManager = LinearLayoutManager(
+                requireContext()
+            ).apply {
+                stackFromEnd = true
+            }
+        }
+    }
+
+    private fun collectUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.messages.collect {
-                    Log.d("ChatFragment", "Messages: $it")
+                viewModel.chatState.collect {messages ->
+                    adapter.submitList(messages)
+                    if (messages.isNotEmpty()) {
+                        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                    }
                 }
             }
         }

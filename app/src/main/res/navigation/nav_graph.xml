@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.sibewig.ewigchatv2.presentation.chats.ChatFragment"
+        android:name="com.sibewig.ewigchatv2.presentation.chat.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat">
         <argument
