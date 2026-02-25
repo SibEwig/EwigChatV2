@@ -44,13 +44,23 @@ class ChatFragment : Fragment() {
         setupWindowInsets()
         setupRecyclerView()
         collectUiState()
-
+        binding.buttonSendMessage.setOnClickListener {
+            val trimmed = binding.editTextMessage.text?.toString()?.trim()
+            if (trimmed.isNullOrEmpty()) return@setOnClickListener
+            viewModel.sendMessage(trimmed)
+            binding.editTextMessage.text?.clear()
+        }
     }
 
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(top = systemBars.top + (8 * resources.displayMetrics.density).toInt())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            v.updatePadding(
+                top = systemBars.top + (8 * resources.displayMetrics.density).toInt(),
+                bottom = maxOf(systemBars.bottom, ime.bottom)
+            )
             insets
         }
     }

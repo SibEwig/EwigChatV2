@@ -13,7 +13,8 @@
         android:theme="@style/Theme.EwigChatV2">
         <activity
             android:name=".presentation.main.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

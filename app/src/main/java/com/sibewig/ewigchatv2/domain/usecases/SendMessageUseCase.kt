@@ -1,7 +1,6 @@
 package com.sibewig.ewigchatv2.domain.usecases
 
 import com.sibewig.ewigchatv2.domain.repository.ChatRepository
-import com.sibewig.ewigchatv2.domain.entity.OutgoingMessage
 import javax.inject.Inject
 
 class SendMessageUseCase @Inject constructor(private val repository: ChatRepository) {
