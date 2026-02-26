@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sibewig.ewigchatv2.databinding.ItemChatBinding
-import com.sibewig.ewigchatv2.domain.entity.Chat
+import com.sibewig.ewigchatv2.presentation.chats.model.ChatUi
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class ChatAdapter : ListAdapter<Chat, ChatAdapter.ChatViewHolder>(ChatDiffCallback) {
+class ChatAdapter : ListAdapter<ChatUi, ChatAdapter.ChatViewHolder>(ChatDiffCallback) {
 
     var onChatClickListener: ((String) -> Unit)? = null
 
@@ -32,7 +32,7 @@ class ChatAdapter : ListAdapter<Chat, ChatAdapter.ChatViewHolder>(ChatDiffCallba
     ) {
         val chat = currentList[position]
         with(holder.binding) {
-            textViewContactName.text = chat.interlocutorId.take(15)
+            textViewContactName.text = chat.interlocutorName
             textViewLastMessage.text = chat.lastMessage?.text
             textViewTime.text = chat.lastMessage?.timestamp?.toChatTime()
             containerChat.setOnClickListener {

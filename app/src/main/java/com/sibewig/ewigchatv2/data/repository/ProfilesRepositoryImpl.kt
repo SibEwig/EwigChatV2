@@ -21,7 +21,7 @@ class ProfilesRepositoryImpl @Inject constructor(
         if (!snapshot.exists()) return null
 
         val dto = snapshot.toObject(ProfileDTO::class.java) ?: return null
-        return dto.toDomain().also { cache[uid] = it }
+        return dto.toDomain(snapshot.id).also { cache[uid] = it }
     }
 
 }

@@ -10,7 +10,7 @@ import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveMessagesUseCase
 import com.sibewig.ewigchatv2.domain.usecases.SendMessageUseCase
 import com.sibewig.ewigchatv2.presentation.chat.model.ChatState
-import com.sibewig.ewigchatv2.presentation.chat.model.MessageUI
+import com.sibewig.ewigchatv2.presentation.chat.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -71,8 +71,8 @@ class ChatViewModel @Inject constructor(
             initialValue = ChatState.Initial
         )
 
-    private fun List<Message>.toUi(currentUserId: String): List<MessageUI> = map { message ->
-        MessageUI(
+    private fun List<Message>.toUi(currentUserId: String): List<MessageUi> = map { message ->
+        MessageUi(
             id = message.id,
             text = message.text,
             timestamp = message.timestamp,

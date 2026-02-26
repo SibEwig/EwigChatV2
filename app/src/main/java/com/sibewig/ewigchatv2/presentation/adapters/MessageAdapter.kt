@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sibewig.ewigchatv2.databinding.ItemMessageIncomingBinding
 import com.sibewig.ewigchatv2.databinding.ItemMessageOutgoingBinding
-import com.sibewig.ewigchatv2.presentation.chat.model.MessageUI
+import com.sibewig.ewigchatv2.presentation.chat.model.MessageUi
 
-class MessageAdapter : ListAdapter<MessageUI, MessageAdapter.MessageViewHolder>(
+class MessageAdapter : ListAdapter<MessageUi, MessageAdapter.MessageViewHolder>(
     MessageDiffCallback
 ) {
 

@@ -6,7 +6,7 @@ sealed class ChatState {
 
     data class Error(val msg: String) : ChatState()
 
-    data class Success(val messages: List<MessageUI>, val interlocutorName: String) : ChatState()
+    data class Success(val messages: List<MessageUi>, val interlocutorName: String) : ChatState()
 
     data object Initial : ChatState()
 

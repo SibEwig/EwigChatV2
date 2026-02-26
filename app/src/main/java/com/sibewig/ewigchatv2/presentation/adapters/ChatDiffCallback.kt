@@ -1,20 +1,20 @@
 package com.sibewig.ewigchatv2.presentation.adapters
 
 import androidx.recyclerview.widget.DiffUtil
-import com.sibewig.ewigchatv2.domain.entity.Chat
+import com.sibewig.ewigchatv2.presentation.chats.model.ChatUi
 
-object ChatDiffCallback: DiffUtil.ItemCallback<Chat>() {
+object ChatDiffCallback: DiffUtil.ItemCallback<ChatUi>() {
 
     override fun areItemsTheSame(
-        oldItem: Chat,
-        newItem: Chat
+        oldItem: ChatUi,
+        newItem: ChatUi
     ): Boolean {
         return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(
-        oldItem: Chat,
-        newItem: Chat
+        oldItem: ChatUi,
+        newItem: ChatUi
     ): Boolean {
         return oldItem == newItem
     }
