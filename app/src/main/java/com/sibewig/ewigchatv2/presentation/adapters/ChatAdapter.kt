@@ -32,7 +32,7 @@ class ChatAdapter : ListAdapter<Chat, ChatAdapter.ChatViewHolder>(ChatDiffCallba
     ) {
         val chat = currentList[position]
         with(holder.binding) {
-            textViewContactName.text = chat.interlocutor.name.take(15)
+            textViewContactName.text = chat.interlocutorId.take(15)
             textViewLastMessage.text = chat.lastMessage?.text
             textViewTime.text = chat.lastMessage?.timestamp?.toChatTime()
             containerChat.setOnClickListener {

@@ -6,14 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Message
 import com.sibewig.ewigchatv2.domain.repository.AuthRepository
+import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveMessagesUseCase
 import com.sibewig.ewigchatv2.domain.usecases.SendMessageUseCase
+import com.sibewig.ewigchatv2.presentation.chat.model.ChatState
 import com.sibewig.ewigchatv2.presentation.chat.model.MessageUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -25,7 +29,8 @@ class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     observeMessagesUseCase: ObserveMessagesUseCase,
     savedStateHandle: SavedStateHandle,
-    authRepository: AuthRepository
+    authRepository: AuthRepository,
+    private val getProfileUseCase: GetProfileUseCase
 ) : ViewModel() {
 
     private val chatId =
@@ -34,19 +39,36 @@ class ChatViewModel @Inject constructor(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val chatState: StateFlow<List<MessageUI>> =
+    val chatState: StateFlow<ChatState> =
         authRepository.authState.flatMapLatest { authState ->
             when (authState) {
-                is AuthState.Authorized -> observeMessagesUseCase(chatId).map {
-                    it.toUi(authState.userID)
+                is AuthState.Authorized -> flow<ChatState> {
+                    val myUid = authState.userID
+
+                    val profileId = chatId
+                        .split("_")
+                        .firstOrNull { it != myUid }
+                        ?: run {
+                            emit(ChatState.Error("Bad chatId") )
+                            return@flow
+                        }
+
+                    val profileName = getProfileUseCase(profileId)?.displayName.orEmpty()
+
+                    emit(ChatState.Initial)
+                    emitAll(
+                        observeMessagesUseCase(chatId).map { messages ->
+                            ChatState.Success(messages.toUi(myUid), profileName)
+                        }
+                    )
                 }
 
-                else -> flowOf(emptyList())
+                else -> flowOf(ChatState.Error("Not authorized"))
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = emptyList()
+            initialValue = ChatState.Initial
         )
 
     private fun List<Message>.toUi(currentUserId: String): List<MessageUI> = map { message ->

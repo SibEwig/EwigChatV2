@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sibewig.ewigchatv2.databinding.FragmentChatBinding
 import com.sibewig.ewigchatv2.presentation.adapters.MessageAdapter
+import com.sibewig.ewigchatv2.presentation.chat.model.ChatState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -79,10 +80,21 @@ class ChatFragment : Fragment() {
     private fun collectUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.chatState.collect {messages ->
-                    adapter.submitList(messages)
-                    if (messages.isNotEmpty()) {
-                        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                viewModel.chatState.collect {state ->
+                    when(state) {
+                        is ChatState.Error -> {
+                        }
+                        ChatState.Initial -> {
+                        }
+                        ChatState.Loading -> {
+                        }
+                        is ChatState.Success -> {
+                            binding.textViewContactName.text = state.interlocutorName
+                            adapter.submitList(state.messages)
+                            if (state.messages.isNotEmpty()) {
+                                binding.recyclerViewMessages.scrollToPosition(state.messages.lastIndex)
+                            }
+                        }
                     }
                 }
             }
