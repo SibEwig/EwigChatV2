@@ -7,10 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavOptions
 import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.domain.AuthState
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -32,17 +33,30 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         val navController = navHost.navController
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.authState.collect { authState ->
+                viewModel.authState
+                    .collect { authState ->
                     Log.d("MainActivity", "Current state: $authState")
                     when (authState) {
                         is AuthState.Authorized -> {
-                            if (navController.currentDestination?.id == R.id.chatsFragment) return@collect
-                            navController.navigate(R.id.chatsFragment)
+                            val destId = navController.currentDestination?.id
+                            if (destId == R.id.authFragment) {
+                                val options = NavOptions.Builder()
+                                    .setPopUpTo(R.id.authFragment, true)
+                                    .setLaunchSingleTop(true)
+                                    .build()
+                                navController.navigate(R.id.chatsFragment, null, options)
+                            }
                         }
 
                         AuthState.Unauthorized -> {
-                            if (navController.currentDestination?.id == R.id.authFragment) return@collect
-                            navController.navigate(R.id.authFragment)
+                            val destId = navController.currentDestination?.id
+                            if (destId != R.id.authFragment) {
+                                val options = NavOptions.Builder()
+                                    .setPopUpTo(navController.graph.id, true)
+                                    .setLaunchSingleTop(true)
+                                    .build()
+                                navController.navigate(R.id.authFragment, null, options)
+                            }
                         }
 
                         AuthState.Initial -> {}
