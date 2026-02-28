@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Message
 import com.sibewig.ewigchatv2.domain.repository.AuthRepository
+import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveMessagesUseCase
 import com.sibewig.ewigchatv2.domain.usecases.SendMessageUseCase
@@ -27,10 +28,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
     observeMessagesUseCase: ObserveMessagesUseCase,
-    savedStateHandle: SavedStateHandle,
-    authRepository: AuthRepository,
-    private val getProfileUseCase: GetProfileUseCase
+    getAuthStateUseCase: GetAuthStateUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val chatId =
@@ -40,7 +41,7 @@ class ChatViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val chatState: StateFlow<ChatState> =
-        authRepository.authState.flatMapLatest { authState ->
+        getAuthStateUseCase().flatMapLatest { authState ->
             when (authState) {
                 is AuthState.Authorized -> flow<ChatState> {
                     val myUid = authState.userID
