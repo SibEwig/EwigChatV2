@@ -3,7 +3,6 @@ package com.sibewig.ewigchatv2.presentation.chats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sibewig.ewigchatv2.domain.AuthState
-import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
 import com.sibewig.ewigchatv2.domain.usecases.LogoutUseCase

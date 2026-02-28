@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Message
-import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveMessagesUseCase
@@ -41,9 +40,11 @@ class ChatViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val chatState: StateFlow<ChatState> =
-        getAuthStateUseCase().flatMapLatest { authState ->
+        getAuthStateUseCase()
+            .flatMapLatest { authState ->
             when (authState) {
                 is AuthState.Authorized -> flow<ChatState> {
+                    emit(ChatState.Loading)
                     val myUid = authState.userID
 
                     val profileId = chatId
@@ -56,7 +57,7 @@ class ChatViewModel @Inject constructor(
 
                     val profileName = getProfileUseCase(profileId)?.displayName.orEmpty()
 
-                    emit(ChatState.Initial)
+
                     emitAll(
                         observeMessagesUseCase(chatId).map { messages ->
                             ChatState.Success(messages.toUi(myUid), profileName)

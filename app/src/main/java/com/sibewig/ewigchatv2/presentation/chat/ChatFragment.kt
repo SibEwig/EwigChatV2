@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -83,18 +84,25 @@ class ChatFragment : Fragment() {
                 viewModel.chatState.collect {state ->
                     when(state) {
                         is ChatState.Error -> {
-                        }
-                        ChatState.Initial -> {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                state.msg,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         ChatState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
                         }
                         is ChatState.Success -> {
+                            binding.progressBar.visibility = View.GONE
                             binding.textViewContactName.text = state.interlocutorName
                             adapter.submitList(state.messages)
                             if (state.messages.isNotEmpty()) {
                                 binding.recyclerViewMessages.scrollToPosition(state.messages.lastIndex)
                             }
                         }
+                        ChatState.Initial -> Unit
                     }
                 }
             }

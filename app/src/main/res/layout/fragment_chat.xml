@@ -29,10 +29,17 @@
             android:includeFontPadding="false"
             android:paddingHorizontal="16dp"
             android:paddingVertical="14dp"
-            android:text="@string/textview_username"
             android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             tools:text="Contact" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
