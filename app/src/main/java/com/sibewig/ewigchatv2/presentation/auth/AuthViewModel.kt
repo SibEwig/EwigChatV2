@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.sibewig.ewigchatv2.presentation.auth.AuthScreenState
 import com.sibewig.ewigchatv2.domain.usecases.LoginUseCase
 import com.sibewig.ewigchatv2.domain.usecases.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
