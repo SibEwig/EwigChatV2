@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">EwigChatV2</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="enter_email">Enter email:</string>
-    <string name="enter_password">Enter password:</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_password">Enter password</string>
+    <string name="confirm_password">Confirm password</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="hello_blank_chats_fragment">Hello blank chats fragment</string>
     <string name="logout_button">Logout</string>
+    <string name="enter_display_name">Enter display name</string>
     <string name="avatar">avatar</string>
-    <string name="enter_message">Введите сообщение:</string>
+    <string name="enter_message">Введите сообщение</string>
     <string name="cd_send_message">Send message</string>
+    <string name="choose_username">Choose username</string>
+    <string name="confirm_registration">Проверьте почту для завершения регистрации</string>
 </resources>

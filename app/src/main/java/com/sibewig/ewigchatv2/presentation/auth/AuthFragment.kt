@@ -9,7 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.databinding.FragmentAuthBinding
+import com.sibewig.ewigchatv2.presentation.registration.RegistrationFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,6 +38,7 @@ class AuthFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
         collectAuthScreenState()
+        observePrefillEmail()
     }
 
     override fun onDestroyView() {
@@ -70,9 +74,8 @@ class AuthFragment : Fragment() {
     private fun setupClickListeners() {
         with(binding) {
             buttonRegister.setOnClickListener {
-                val email = editTextEmail.text?.trim().toString()
-                val password = editTextPassword.text?.trim().toString()
-                viewModel.onRegister(email, password)
+                val navController = findNavController()
+                navController.navigate(R.id.registrationFragment)
             }
             buttonLogin.setOnClickListener {
                 val email = editTextEmail.text?.trim().toString()
@@ -80,5 +83,16 @@ class AuthFragment : Fragment() {
                 viewModel.onLogin(email, password)
             }
         }
+    }
+
+    private fun observePrefillEmail() {
+        val navController = findNavController()
+        val handle = navController.currentBackStackEntry?.savedStateHandle
+        handle?.getLiveData<String>(RegistrationFragment.KEY_PREFILL_EMAIL)
+            ?.observe(viewLifecycleOwner) {
+                binding.editTextEmail.setText(it)
+                binding.editTextPassword.requestFocus()
+                handle.remove<String>(RegistrationFragment.KEY_PREFILL_EMAIL)
+            }
     }
 }

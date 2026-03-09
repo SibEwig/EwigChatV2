@@ -1,15 +1,18 @@
 package com.sibewig.ewigchatv2.data.repository
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.sibewig.ewigchatv2.data.model.ProfileDTO
 import com.sibewig.ewigchatv2.data.toDomain
 import com.sibewig.ewigchatv2.domain.entity.Profile
+import com.sibewig.ewigchatv2.domain.exceptions.UsernameIsTakenException
 import com.sibewig.ewigchatv2.domain.repository.ProfilesRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class ProfilesRepositoryImpl @Inject constructor(
-    db: FirebaseFirestore
+    private val db: FirebaseFirestore
 ) : ProfilesRepository {
 
     private val usersCollection = db.collection("users")
@@ -24,4 +27,86 @@ class ProfilesRepositoryImpl @Inject constructor(
         return dto.toDomain(snapshot.id).also { cache[uid] = it }
     }
 
+    override suspend fun isUsernameAvailable(username: String): Boolean {
+        val usernameLower = username.trim().lowercase()
+
+        val snapshot = db.collection(COLLECTION_USERNAMES)
+            .document(usernameLower)
+            .get()
+            .await()
+
+        return !snapshot.exists()
+    }
+
+    override suspend fun createProfile(
+        uid: String,
+        email: String,
+        displayName: String,
+        avatarUrl: String?,
+        username: String
+    ) {
+        val usernameLower = username.trim().lowercase()
+        val currentServerTime = FieldValue.serverTimestamp()
+
+        val usernameRef = db.collection(COLLECTION_USERNAMES)
+            .document(usernameLower)
+
+        val userRef = db.collection(COLLECTION_USERS)
+            .document(uid)
+
+        db.runTransaction { transaction ->
+            val usernameSnapshot = transaction.get(usernameRef)
+
+            if (usernameSnapshot.exists()) {
+                throw UsernameIsTakenException()
+            }
+
+            transaction.set(
+                usernameRef,
+                mapOf(
+                    UID to uid,
+                    CREATED_AT to currentServerTime
+                )
+            )
+
+            transaction.set(
+                userRef,
+                mapOf(
+                    DISPLAY_NAME to displayName,
+                    EMAIL to email,
+                    PHOTO_URL to avatarUrl,
+                    CREATED_AT to currentServerTime,
+                    LAST_SEEN to currentServerTime,
+                    USERNAME to username,
+                    USERNAME_LOWER to usernameLower
+                ),
+                SetOptions.merge()
+            )
+
+            null
+        }.await()
+    }
+
+    override suspend fun updateProfile(profile: Profile) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteProfile(uid: String) {
+        TODO("Not yet implemented")
+    }
+
+    companion object {
+
+        private const val EMAIL = "email"
+        private const val UID = "uid"
+        private const val DISPLAY_NAME = "displayName"
+        private const val PHOTO_URL = "photoUrl"
+        private const val CREATED_AT = "createdAt"
+        private const val LAST_SEEN = "lastSeen"
+        private const val USERNAME = "username"
+        private const val USERNAME_LOWER = "usernameLower"
+        private const val COLLECTION_USERS = "users"
+        private const val COLLECTION_USERNAMES = "usernames"
+
+    }
 }

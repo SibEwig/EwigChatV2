@@ -1,8 +1,6 @@
 package com.sibewig.ewigchatv2.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -13,20 +11,24 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val auth: FirebaseAuth
 ) : AuthRepository {
 
     override val authState: Flow<AuthState> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
-            trySend(
-                if (user == null) {
-                    AuthState.Unauthorized
-                } else {
-                    AuthState.Authorized(user.uid)
+
+            if (user == null) {
+                trySend(AuthState.Unauthorized)
+            } else {
+                user.reload().addOnCompleteListener {
+                    if (user.isEmailVerified) {
+                        trySend(AuthState.Authorized(user.uid))
+                    } else {
+                        trySend(AuthState.Unauthorized)
+                    }
                 }
-            )
+            }
         }
 
         auth.addAuthStateListener(listener)
@@ -51,29 +53,23 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun register(
         email: String,
-        password: String,
-        displayName: String?,
-        photoUrl: String?
-    ) {
+        password: String
+    ): String {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
-        val uid = result.user?.uid ?: throw Exception("User ID is null")
-
-        val currentServerTime = FieldValue.serverTimestamp()
-
-        val userData = mapOf(
-            "uid" to uid,
-            "displayName" to displayName,
-            "photoUrl" to photoUrl,
-            "createdAt" to currentServerTime,
-            "lastSeen" to currentServerTime
-        )
-        db.collection("users")
-            .document(uid)
-            .set(userData)
-            .await()
+        return result.user?.uid ?: throw Exception("User ID is null")
     }
 
-    override suspend fun logout() {
+    override suspend fun sendVerificationEmail() {
+        auth.currentUser?.sendEmailVerification()?.await()
+    }
+
+    override suspend fun isEmailVerified(): Boolean {
+        val user = auth.currentUser ?: return false
+        user.reload().await()
+        return user.isEmailVerified
+    }
+
+    override fun logout() {
         auth.signOut()
     }
 }
