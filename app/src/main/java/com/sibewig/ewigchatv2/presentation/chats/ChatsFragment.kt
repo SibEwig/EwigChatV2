@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sibewig.ewigchatv2.databinding.FragmentChatsBinding
 import com.sibewig.ewigchatv2.presentation.adapters.ChatAdapter
+import com.sibewig.ewigchatv2.presentation.chats.model.ChatsState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -74,8 +76,28 @@ class ChatsFragment : Fragment() {
     private fun collectUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.chatsState.collect {
-                    adapter.submitList(it)
+                viewModel.chatsState.collect { state ->
+                    when (state) {
+                        ChatsState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        is ChatsState.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            adapter.submitList(state.chats)
+                        }
+
+                        is ChatsState.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                state.msg,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        ChatsState.Initial -> Unit
+                    }
                 }
             }
         }
