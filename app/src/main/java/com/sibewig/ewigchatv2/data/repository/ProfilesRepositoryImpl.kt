@@ -15,10 +15,11 @@ class ProfilesRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore
 ) : ProfilesRepository {
 
-    private val usersCollection = db.collection("users")
+    private val usersCollection = db.collection(COLLECTION_USERS)
+    private val usernamesCollection = db.collection(COLLECTION_USERNAMES)
     private val cache = mutableMapOf<String, Profile>()
 
-    override suspend fun getProfile(uid: String): Profile? {
+    override suspend fun getProfileByUid(uid: String): Profile? {
         cache[uid]?.let { return it }
         val snapshot = usersCollection.document(uid).get().await()
         if (!snapshot.exists()) return null
@@ -27,10 +28,23 @@ class ProfilesRepositoryImpl @Inject constructor(
         return dto.toDomain(snapshot.id).also { cache[uid] = it }
     }
 
+    override suspend fun getProfileByUsername(username: String): Profile? {
+        val usernameLower = username.trim().lowercase()
+        val document = usersCollection
+            .whereEqualTo("usernameLower", usernameLower)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+            .firstOrNull()
+            ?: return null
+        return document.toObject(ProfileDTO::class.java)?.toDomain(document.id)
+    }
+
     override suspend fun isUsernameAvailable(username: String): Boolean {
         val usernameLower = username.trim().lowercase()
 
-        val snapshot = db.collection(COLLECTION_USERNAMES)
+        val snapshot = usernamesCollection
             .document(usernameLower)
             .get()
             .await()
@@ -48,10 +62,10 @@ class ProfilesRepositoryImpl @Inject constructor(
         val usernameLower = username.trim().lowercase()
         val currentServerTime = FieldValue.serverTimestamp()
 
-        val usernameRef = db.collection(COLLECTION_USERNAMES)
+        val usernameRef = usernamesCollection
             .document(usernameLower)
 
-        val userRef = db.collection(COLLECTION_USERS)
+        val userRef = usersCollection
             .document(uid)
 
         db.runTransaction { transaction ->

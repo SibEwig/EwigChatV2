@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sibewig.ewigchatv2.databinding.FragmentChatsBinding
 import com.sibewig.ewigchatv2.presentation.adapters.ChatAdapter
+import com.sibewig.ewigchatv2.presentation.chats.model.ChatsEvent
 import com.sibewig.ewigchatv2.presentation.chats.model.ChatsState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,10 +44,11 @@ class ChatsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         setupWindowInsets()
         setupClickListeners()
         collectUiState()
-        setupRecyclerView()
+        collectEvents()
     }
 
     private fun setupWindowInsets() {
@@ -64,6 +66,9 @@ class ChatsFragment : Fragment() {
         adapter.onChatClickListener = {
             val direction = ChatsFragmentDirections.actionChatsFragmentToChatFragment(it)
             findNavController().navigate(direction)
+        }
+        binding.buttonStartChat.setOnClickListener {
+            StartChatDialogFragment().show(childFragmentManager, StartChatDialogFragment.TAG)
         }
     }
 
@@ -97,6 +102,24 @@ class ChatsFragment : Fragment() {
                         }
 
                         ChatsState.Initial -> Unit
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        is ChatsEvent.OpenChat -> {
+                            val direction = ChatsFragmentDirections
+                                .actionChatsFragmentToChatFragment(event.chatId)
+                            findNavController().navigate(direction)
+                        }
+
+                        else -> Unit
                     }
                 }
             }

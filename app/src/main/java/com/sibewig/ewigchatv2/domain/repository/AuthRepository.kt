@@ -7,6 +7,8 @@ interface AuthRepository {
 
     val authState: Flow<AuthState>
 
+    suspend fun getCurrentUserUid(): String?
+
     suspend fun login(email: String, password: String)
 
     suspend fun register(

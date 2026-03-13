@@ -25,7 +25,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     private val currentUser = auth.currentUser
 
-    private val chatsCollection = db.collection("chats")
+    private val chatsCollection = db.collection(COLLECTION_CHATS)
 
     override suspend fun sendMessage(chatId: String, msg: String) {
         val user = currentUser ?:
@@ -35,24 +35,24 @@ class ChatRepositoryImpl @Inject constructor(
 
         val normalizedChatId = normalizeChatId(chatId)
 
-        val members = normalizedChatId.split("_")
+        val members = normalizedChatId.split(CHAT_ID_DELIMITER)
 
         val msgData = mapOf(
-            "senderId" to user.uid,
-            "text" to msg,
-            "createdAt" to currentServerTime
+            SENDER_ID to user.uid,
+            TEXT to msg,
+            CREATED_AT to currentServerTime
         )
 
         val chatData = mapOf(
-            "members" to members,
-            "updatedAt" to currentServerTime,
-            "lastMessageText" to msg,
-            "lastMessageSenderId" to user.uid,
-            "lastMessageAt" to currentServerTime
+            MEMBERS to members,
+            UPDATED_AT to currentServerTime,
+            LAST_MESSAGE_TEXT to msg,
+            LAST_MESSAGE_SENDER_ID to user.uid,
+            LAST_MESSAGE_AT to currentServerTime
         )
 
         val chatRef = chatsCollection.document(normalizedChatId)
-        val msgRef = chatRef.collection("messages").document()
+        val msgRef = chatRef.collection(COLLECTION_MESSAGES).document()
 
         chatRef.set(chatData, SetOptions.merge()).await()
         msgRef.set(msgData).await()
@@ -60,11 +60,9 @@ class ChatRepositoryImpl @Inject constructor(
 
     override fun observeChats(myUid: String): Flow<List<Chat>> = callbackFlow {
 
-        Log.d("ChatRepositoryImpl", "Trying to observe chats for myUid: $myUid")
-
         val query = chatsCollection
-            .whereArrayContains("members", myUid)
-            .orderBy("updatedAt", Query.Direction.DESCENDING)
+            .whereArrayContains(MEMBERS, myUid)
+            .orderBy(UPDATED_AT, Query.Direction.DESCENDING)
 
         val registration = query.addSnapshotListener { snapshot, error ->
             if (error != null) {
@@ -74,7 +72,6 @@ class ChatRepositoryImpl @Inject constructor(
 
             val chats = snapshot
                 ?.toObjects(ChatDTO::class.java)
-                .also { Log.d("ChatRepositoryImpl", "Chats: $it") }
                 ?.mapNotNull { it.toDomain(myUid) }
                 .orEmpty()
 
@@ -88,12 +85,10 @@ class ChatRepositoryImpl @Inject constructor(
 
         val normalizedChatId = normalizeChatId(chatId)
 
-        Log.d("ChatRepositoryImpl", "Trying to observe messages for chatId: $normalizedChatId")
-
         val query = chatsCollection
             .document(normalizedChatId)
-            .collection("messages")
-            .orderBy("createdAt")
+            .collection(COLLECTION_MESSAGES)
+            .orderBy(CREATED_AT)
 
         val registration = query
             .addSnapshotListener { snapshot, error -> 
@@ -113,9 +108,79 @@ class ChatRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() } 
     }
 
+    override suspend fun createDirectChat(
+        myUid: String,
+        otherUid: String
+    ): String {
+        require(myUid != otherUid) { "Cannot create chat with yourself" }
+
+        val normalizedChatId = normalizeChatId("$myUid$CHAT_ID_DELIMITER$otherUid")
+        val currentServerTime = FieldValue.serverTimestamp()
+
+        val chatData = mapOf(
+            MEMBERS to normalizedChatId.split(CHAT_ID_DELIMITER),
+            UPDATED_AT to currentServerTime,
+            LAST_MESSAGE_TEXT to null,
+            LAST_MESSAGE_SENDER_ID to null,
+            LAST_MESSAGE_AT to null
+        )
+
+        chatsCollection
+            .document(normalizedChatId)
+            .set(chatData, SetOptions.merge())
+            .await()
+
+        return normalizedChatId
+    }
+
+    override suspend fun findDirectChat(
+        myUid: String,
+        otherUid: String
+    ): Chat? {
+        require(myUid != otherUid) { "Cannot find chat with yourself" }
+
+        val normalizedChatId = normalizeChatId("$myUid$CHAT_ID_DELIMITER$otherUid")
+        Log.d("START_CHAT", "before findDirectChat")
+        val snapshot = chatsCollection
+            .document(normalizedChatId)
+            .get()
+            .await()
+
+        if (!snapshot.exists()) return null
+
+        val dto = snapshot.toObject(ChatDTO::class.java) ?: return null
+        Log.d("START_CHAT", "after findDirectChat: ${dto.toDomain(myUid)}")
+        return dto.toDomain(myUid)
+    }
+
+    override suspend fun isChatCreated(chatId: String): Boolean {
+        val normalizedChatId = normalizeChatId(chatId)
+        return chatsCollection
+            .document(normalizedChatId)
+            .get()
+            .await()
+            .exists()
+    }
+
     private fun normalizeChatId(chatId: String): String {
-        val parts = chatId.split("_")
+        val parts = chatId.split(CHAT_ID_DELIMITER)
         require(parts.size == 2) { "Invalid chatId format: $chatId" }
-        return parts.sorted().joinToString("_")
+        return parts.sorted().joinToString(CHAT_ID_DELIMITER)
+    }
+
+    companion object {
+
+        private const val SENDER_ID = "senderId"
+        private const val TEXT = "text"
+        private const val CREATED_AT = "createdAt"
+        private const val MEMBERS = "members"
+        private const val UPDATED_AT = "updatedAt"
+        private const val LAST_MESSAGE_TEXT = "lastMessageText"
+        private const val LAST_MESSAGE_SENDER_ID = "lastMessageSenderId"
+        private const val LAST_MESSAGE_AT = "lastMessageAt"
+        private const val CHAT_ID_DELIMITER = "_"
+
+        private const val COLLECTION_CHATS = "chats"
+        private const val COLLECTION_MESSAGES = "messages"
     }
 }

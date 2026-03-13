@@ -3,23 +3,31 @@ package com.sibewig.ewigchatv2.presentation.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Message
+import com.sibewig.ewigchatv2.domain.usecases.DoesChatExistUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
-import com.sibewig.ewigchatv2.domain.usecases.GetProfileUseCase
+import com.sibewig.ewigchatv2.domain.usecases.GetProfileByUidUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveMessagesUseCase
 import com.sibewig.ewigchatv2.domain.usecases.SendMessageUseCase
 import com.sibewig.ewigchatv2.presentation.chat.model.ChatState
 import com.sibewig.ewigchatv2.presentation.chat.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,9 +35,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getProfileUseCase: GetProfileUseCase,
-    observeMessagesUseCase: ObserveMessagesUseCase,
+    private val getProfileByUidUseCase: GetProfileByUidUseCase,
+    private val observeMessagesUseCase: ObserveMessagesUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
+    doesChatExistUseCase: DoesChatExistUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -38,40 +47,73 @@ class ChatViewModel @Inject constructor(
             "chatId is required for ChatViewModel"
         )
 
+    private val isChatCreated = MutableStateFlow(false)
+
+    init {
+        viewModelScope.launch {
+            isChatCreated.value = doesChatExistUseCase(chatId)
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val chatState: StateFlow<ChatState> =
-        getAuthStateUseCase()
-            .flatMapLatest { authState ->
-            when (authState) {
-                is AuthState.Authorized -> flow<ChatState> {
-                    emit(ChatState.Loading)
-                    val myUid = authState.userID
+        combine(getAuthStateUseCase(), isChatCreated) { authState, chatCreated ->
+            authState to chatCreated
+        }
+            .flatMapLatest { (authState, chatCreated) ->
+                when (authState) {
+                    is AuthState.Authorized -> {
+                        val myUid = authState.userID
 
-                    val profileId = chatId
-                        .split("_")
-                        .firstOrNull { it != myUid }
-                        ?: run {
-                            emit(ChatState.Error("Bad chatId") )
-                            return@flow
-                        }
+                        buildAuthorizedChatState(myUid, chatCreated)
+                            .onStart { emit(ChatState.Loading) }
+                            .catch { e ->
+                                if (e is CancellationException) throw e
+                                emit(ChatState.Error(e.toChatErrorMessage()))
+                            }
 
-                    val profileName = getProfileUseCase(profileId)?.displayName.orEmpty()
+                    }
 
-
-                    emitAll(
-                        observeMessagesUseCase(chatId).map { messages ->
-                            ChatState.Success(messages.toUi(myUid), profileName)
-                        }
-                    )
+                    else -> flowOf(ChatState.Error("Not authorized"))
                 }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                initialValue = ChatState.Initial
+            )
 
-                else -> flowOf(ChatState.Error("Not authorized"))
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = ChatState.Initial
-        )
+    private fun buildAuthorizedChatState(
+        myUid: String,
+        chatCreated: Boolean
+    ): Flow<ChatState> = flow {
+        val profileId = extractInterlocutorId(myUid)
+        if (profileId == null) {
+            emit(ChatState.Error("Bad ChatId"))
+            return@flow
+        }
+        val profileName = getProfileByUidUseCase(profileId)?.displayName.orEmpty()
+
+        if (chatCreated) {
+            emitAll(
+                observeMessagesUseCase(chatId)
+                    .map<List<Message>, ChatState> { messages ->
+                        ChatState.Success(
+                            messages.toUi(myUid),
+                            profileName
+                        )
+                    }
+            )
+        } else {
+            emit(ChatState.Success(emptyList(), profileName))
+        }
+    }
+
+    private fun extractInterlocutorId(myUid: String): String? {
+        val profileId = chatId
+            .split(CHAT_ID_DELIMITER)
+            .firstOrNull { it != myUid }
+        return profileId
+    }
 
     private fun List<Message>.toUi(currentUserId: String): List<MessageUi> = map { message ->
         MessageUi(
@@ -82,9 +124,29 @@ class ChatViewModel @Inject constructor(
         )
     }
 
+    private fun Throwable.toChatErrorMessage(): String {
+        return when (this) {
+            is FirebaseFirestoreException -> when (code) {
+                FirebaseFirestoreException.Code.PERMISSION_DENIED ->
+                    "Нет доступа к чату"
+
+                FirebaseFirestoreException.Code.UNAVAILABLE ->
+                    "Не удалось подключиться к серверу"
+
+                else ->
+                    "Не удалось загрузить сообщения"
+            }
+
+            else -> "Произошла ошибка при загрузке чата"
+        }
+    }
+
     fun sendMessage(text: String) {
         viewModelScope.launch {
             sendMessageUseCase(chatId, text)
+            if (!isChatCreated.value) {
+                isChatCreated.value = true
+            }
         }
     }
 
@@ -92,6 +154,7 @@ class ChatViewModel @Inject constructor(
 
         private const val CHAT_ID = "chatId"
         private const val STOP_TIMEOUT_MILLIS = 5000L
+        private const val CHAT_ID_DELIMITER = "_"
 
     }
 }

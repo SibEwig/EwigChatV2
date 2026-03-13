@@ -47,6 +47,10 @@ class AuthRepositoryImpl @Inject constructor(
     }
         .distinctUntilChanged()
 
+    override suspend fun getCurrentUserUid(): String? {
+        return auth.currentUser?.uid
+    }
+
     override suspend fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).await()
     }

@@ -12,4 +12,9 @@ interface ChatRepository {
 
     fun observeMessages(chatId: String): Flow<List<Message>>
 
+    suspend fun findDirectChat(myUid: String, otherUid: String): Chat?
+
+    suspend fun createDirectChat(myUid: String, otherUid: String): String
+
+    suspend fun isChatCreated(chatId: String): Boolean
 }

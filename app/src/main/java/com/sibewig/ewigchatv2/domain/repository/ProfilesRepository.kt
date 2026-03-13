@@ -4,7 +4,9 @@ import com.sibewig.ewigchatv2.domain.entity.Profile
 
 interface ProfilesRepository {
 
-    suspend fun getProfile(uid: String): Profile?
+    suspend fun getProfileByUid(uid: String): Profile?
+
+    suspend fun getProfileByUsername(username: String): Profile?
 
     suspend fun isUsernameAvailable(username: String): Boolean
 
