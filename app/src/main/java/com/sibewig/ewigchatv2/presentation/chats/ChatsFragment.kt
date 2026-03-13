@@ -115,7 +115,7 @@ class ChatsFragment : Fragment() {
                     when (event) {
                         is ChatsEvent.OpenChat -> {
                             val direction = ChatsFragmentDirections
-                                .actionChatsFragmentToChatFragment(event.chatId)
+                                .actionChatsFragmentToChatFragment(event.chatId, false)
                             findNavController().navigate(direction)
                         }
 

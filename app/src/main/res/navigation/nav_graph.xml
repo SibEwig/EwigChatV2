@@ -30,6 +30,10 @@
         <argument
             android:name="chatId"
             app:argType="string" />
+        <argument
+            android:name="isExistingChat"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"

@@ -1,5 +1,6 @@
 package com.sibewig.ewigchatv2.presentation.chat
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,9 +44,12 @@ class ChatViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val chatId =
-        savedStateHandle.get<String>(CHAT_ID) ?: throw RuntimeException(
-            "chatId is required for ChatViewModel"
-        )
+        savedStateHandle.get<String>(CHAT_ID) ?: error("chatId is required for ChatViewModel")
+
+    // True when ChatFragment opened from Chats list.
+    // In this case chat definitely exists and we can observe messages immediately.
+    // For chats started via username chat may not exist yet.
+    private val isExistingChat = savedStateHandle.get<Boolean>(IS_EXISTING_CHAT) ?: false
 
     private val isChatCreated = MutableStateFlow(false)
 
@@ -93,7 +97,7 @@ class ChatViewModel @Inject constructor(
         }
         val profileName = getProfileByUidUseCase(profileId)?.displayName.orEmpty()
 
-        if (chatCreated) {
+        if (isExistingChat || chatCreated) {
             emitAll(
                 observeMessagesUseCase(chatId)
                     .map<List<Message>, ChatState> { messages ->
@@ -105,6 +109,7 @@ class ChatViewModel @Inject constructor(
             )
         } else {
             emit(ChatState.Success(emptyList(), profileName))
+            Log.d("ChatViewModel", "Emitted empty list")
         }
     }
 
@@ -153,6 +158,7 @@ class ChatViewModel @Inject constructor(
     companion object {
 
         private const val CHAT_ID = "chatId"
+        private const val IS_EXISTING_CHAT = "isExistingChat"
         private const val STOP_TIMEOUT_MILLIS = 5000L
         private const val CHAT_ID_DELIMITER = "_"
 
