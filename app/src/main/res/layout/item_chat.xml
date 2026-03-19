@@ -17,12 +17,12 @@
 
         <ImageView
             android:id="@+id/imageViewAvatar"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
             android:background="@drawable/bg_avatar_circle"
             android:contentDescription="@string/avatar"
             android:padding="10dp"
-            android:src="@android:drawable/ic_menu_myplaces"
+            android:src="@drawable/hedgehog_3506930"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -50,11 +50,12 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:layout_marginBottom="8dp"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/textViewTime"
             app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
-            app:layout_constraintTop_toBottomOf="@+id/textViewContactName" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewAvatar" />
 
         <TextView
             android:id="@+id/textViewTime"

@@ -14,51 +14,28 @@
         android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonLogout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_chat" />
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonLogout"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/cd_send_message"
-        android:text=""
-        app:backgroundTint="?attr/colorSurface"
-        app:cornerRadius="12dp"
-        app:icon="@drawable/ic_exit"
-        app:iconGravity="textStart"
-        app:iconPadding="0dp"
-        app:iconSize="20dp"
-        app:iconTint="?attr/colorOnSurface"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:strokeColor="?attr/colorOutline"
-        app:strokeWidth="1dp" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonStartChat"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_margin="16dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="24dp"
+        android:backgroundTint="#DDD9E8"
         android:contentDescription="@string/cd_send_message"
         android:text=""
-        app:backgroundTint="?attr/colorSurface"
-        app:cornerRadius="12dp"
+        app:cornerRadius="24dp"
+        app:elevation="16dp"
         app:icon="@drawable/ic_start_chat"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
-        app:iconSize="24dp"
-        app:iconTint="?attr/colorOnSurface"
+        app:iconSize="28dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewChats"
-        app:strokeColor="?attr/colorOutline"
-        app:strokeWidth="1dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"

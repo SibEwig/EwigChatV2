@@ -60,9 +60,6 @@ class ChatsFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.buttonLogout.setOnClickListener {
-            viewModel.onLogout()
-        }
         adapter.onChatClickListener = {
             val direction = ChatsFragmentDirections.actionChatsFragmentToChatFragment(it)
             findNavController().navigate(direction)
