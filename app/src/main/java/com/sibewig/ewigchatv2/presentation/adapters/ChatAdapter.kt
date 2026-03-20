@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sibewig.ewigchatv2.databinding.ItemChatBinding
 import com.sibewig.ewigchatv2.presentation.chats.model.ChatUi
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.sibewig.ewigchatv2.presentation.extensions.toMessageTime
 
 class ChatAdapter : ListAdapter<ChatUi, ChatAdapter.ChatViewHolder>(ChatDiffCallback) {
 
@@ -34,7 +32,7 @@ class ChatAdapter : ListAdapter<ChatUi, ChatAdapter.ChatViewHolder>(ChatDiffCall
         with(holder.binding) {
             textViewContactName.text = chat.interlocutorName
             textViewLastMessage.text = chat.lastMessage?.text
-            textViewTime.text = chat.lastMessage?.timestamp?.toChatTime()
+            textViewTime.text = chat.lastMessage?.timestamp?.toMessageTime()
             containerChat.setOnClickListener {
                 onChatClickListener?.invoke(chat.id)
             }
@@ -44,10 +42,4 @@ class ChatAdapter : ListAdapter<ChatUi, ChatAdapter.ChatViewHolder>(ChatDiffCall
     class ChatViewHolder(val binding: ItemChatBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-}
-
-
-fun Long.toChatTime(): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(Date(this))
 }

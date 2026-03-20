@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sibewig.ewigchatv2.databinding.ItemMessageIncomingBinding
 import com.sibewig.ewigchatv2.databinding.ItemMessageOutgoingBinding
 import com.sibewig.ewigchatv2.presentation.chat.model.MessageUi
+import com.sibewig.ewigchatv2.presentation.extensions.toMessageTime
 
 class MessageAdapter : ListAdapter<MessageUi, MessageAdapter.MessageViewHolder>(
     MessageDiffCallback
@@ -48,10 +49,12 @@ class MessageAdapter : ListAdapter<MessageUi, MessageAdapter.MessageViewHolder>(
         when (holder) {
             is MessageViewHolder.Incoming -> {
                 holder.binding.tvMessage.text = message.text
+                holder.binding.tvTime.text = message.timestamp.toMessageTime()
             }
 
             is MessageViewHolder.Outgoing -> {
                 holder.binding.tvMessage.text = message.text
+                holder.binding.tvTime.text = message.timestamp.toMessageTime()
             }
         }
     }

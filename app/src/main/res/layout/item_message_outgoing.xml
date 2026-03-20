@@ -10,20 +10,32 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end">
+        android:layout_gravity="end"
+        android:background="@drawable/bg_message_outgoing">
 
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_message_outgoing"
             android:maxWidth="300dp"
             android:paddingHorizontal="14dp"
-            android:paddingVertical="10dp"
+            android:paddingTop="10dp"
             android:textColor="?attr/colorOnPrimaryContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Какое-то длинное сообщение для проверки. Какое-то длинное сообщение для проверки." />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:paddingHorizontal="10dp"
+            android:paddingBottom="4dp"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMessage"
+            tools:text="17:00" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
