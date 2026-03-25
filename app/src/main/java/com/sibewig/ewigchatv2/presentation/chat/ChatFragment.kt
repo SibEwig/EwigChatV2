@@ -55,14 +55,15 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupWindowInsets() {
+        val extraTopPadding = (8 * resources.displayMetrics.density).toInt()
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
 
             v.updatePadding(
-                top = systemBars.top + (8 * resources.displayMetrics.density).toInt(),
-                bottom = maxOf(systemBars.bottom, ime.bottom)
+                top = systemBars.top + extraTopPadding
             )
+
             insets
         }
     }

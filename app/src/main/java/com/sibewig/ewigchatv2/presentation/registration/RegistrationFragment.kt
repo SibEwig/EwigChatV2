@@ -5,9 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -43,7 +40,6 @@ class RegistrationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupWindowInsets()
         collectUiState()
         setUpInputListeners()
         setUpClickListeners()
@@ -150,19 +146,6 @@ class RegistrationFragment : Fragment() {
                 )
             }
 
-        }
-    }
-
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-
-            v.updatePadding(
-                top = systemBars.top + (8 * resources.displayMetrics.density).toInt(),
-                bottom = maxOf(systemBars.bottom, ime.bottom)
-            )
-            insets
         }
     }
 

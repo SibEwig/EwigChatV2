@@ -1,7 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.ProfileFragment">
-</FrameLayout>
+    android:background="?attr/colorSurface">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollViewProfile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="370dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="370dp" />
+
+            <ImageView
+                android:id="@+id/imageViewAvatar"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:contentDescription="@string/avatar_image"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/hedgehog_3506930"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorOnSurface"
+                tools:ignore="ImageContrastCheck" />
+
+            <EditText
+                android:id="@+id/editTextDisplayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@null"
+                android:enabled="false"
+                android:fontFamily="@font/manrope_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:padding="4dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="28sp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/imageViewAvatar"
+                tools:text="Пётр Петров" />
+
+            <TextView
+                android:id="@+id/textViewUsername"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:alpha="0.8"
+                android:fontFamily="@font/manrope_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/editTextDisplayName"
+                tools:text=" @PetrPetr" />
+
+            <ImageView
+                android:id="@+id/imageViewEmailIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="24dp"
+                android:alpha="0.8"
+                android:contentDescription="@null"
+                android:src="@drawable/outline_alternate_email_24"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/textViewUsername"
+                app:tint="?attr/colorOnSurface"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/textViewEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/manrope_regular"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/imageViewEmailIcon"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toEndOf="@id/imageViewEmailIcon"
+                app:layout_constraintTop_toTopOf="@id/imageViewEmailIcon"
+                tools:text="petyapet@yandex.ru" />
+
+            <ImageView
+                android:id="@+id/imageViewAboutIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="20dp"
+                android:alpha="0.8"
+                android:contentDescription="@null"
+                android:src="@drawable/outline_info_24"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/imageViewEmailIcon"
+                app:tint="?attr/colorOnSurface"
+                tools:ignore="ImageContrastCheck" />
+
+            <EditText
+                android:id="@+id/editTextAbout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:background="@null"
+                android:enabled="false"
+                android:fontFamily="@font/manrope_regular"
+                android:gravity="top|start"
+                android:hint="@string/hint_about"
+                android:includeFontPadding="false"
+                android:inputType="textMultiLine"
+                android:maxLength="250"
+                android:maxLines="6"
+                android:minLines="3"
+                android:padding="4dp"
+                android:textAlignment="viewStart"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toEndOf="@id/imageViewAboutIcon"
+                app:layout_constraintTop_toTopOf="@id/imageViewAboutIcon" />
+
+            <TextView
+                android:id="@+id/buttonEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/manrope_regular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.05"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="12dp"
+                android:text="@string/button_edit"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/outline_edit_24"
+                app:drawableTint="?attr/colorOnSurface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editTextAbout" />
+
+            <TextView
+                android:id="@+id/buttonSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/manrope_regular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.05"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="12dp"
+                android:text="@string/button_save"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/outline_save_24"
+                app:drawableTint="?attr/colorOnSurface"
+                app:layout_constraintEnd_toStartOf="@id/buttonCancel"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editTextAbout" />
+
+            <TextView
+                android:id="@+id/buttonCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="24dp"
+                android:fontFamily="@font/manrope_regular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.05"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="12dp"
+                android:text="@string/button_cancel"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:alpha="0.75"
+                app:drawableStartCompat="@drawable/outline_cancel_24"
+                app:drawableTint="?attr/colorOnSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonSave"
+                app:layout_constraintTop_toBottomOf="@id/editTextAbout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

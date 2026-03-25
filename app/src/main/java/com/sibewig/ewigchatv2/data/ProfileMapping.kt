@@ -7,6 +7,9 @@ fun ProfileDTO.toDomain(id: String): Profile {
     return Profile(
         id = id,
         displayName = displayName ?: "Unknown name",
-        avatarUrl = avatarUrl
+        avatarUrl = avatarUrl,
+        username = username ?: "Unknown username",
+        email = email ?: "Unknown email",
+        about = about ?: ""
     )
 }

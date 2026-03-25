@@ -102,7 +102,16 @@ class ProfilesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateProfile(profile: Profile) {
-        TODO("Not yet implemented")
+        usersCollection
+            .document(profile.id)
+            .update(
+                mapOf(
+                    "displayName" to profile.displayName,
+                    "about" to profile.about
+                )
+            )
+            .await()
+        cache[profile.id] = profile
     }
 
     override suspend fun deleteProfile(uid: String) {

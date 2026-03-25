@@ -10,7 +10,6 @@ import com.sibewig.ewigchatv2.domain.exceptions.ProfileNotFoundException
 import com.sibewig.ewigchatv2.domain.exceptions.UnauthorizedException
 import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetProfileByUidUseCase
-import com.sibewig.ewigchatv2.domain.usecases.LogoutUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ObserveChatsUseCase
 import com.sibewig.ewigchatv2.domain.usecases.ResolveDirectChatIdUseCase
 import com.sibewig.ewigchatv2.presentation.chats.model.ChatUi
@@ -35,7 +34,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val observeChatsUseCase: ObserveChatsUseCase,
-    private val logoutUseCase: LogoutUseCase,
     private val getProfileByUidUseCase: GetProfileByUidUseCase,
     private val resolveDirectChatIdUseCase: ResolveDirectChatIdUseCase,
     getAuthStateUseCase: GetAuthStateUseCase
@@ -79,12 +77,6 @@ class ChatsViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = ChatsState.Initial
     )
-
-    fun onLogout() {
-        viewModelScope.launch {
-            logoutUseCase()
-        }
-    }
 
     fun startChatWithUser(username: String) {
         viewModelScope.launch {
