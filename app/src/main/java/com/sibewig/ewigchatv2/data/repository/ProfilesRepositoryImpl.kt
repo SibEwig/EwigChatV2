@@ -30,7 +30,7 @@ class ProfilesRepositoryImpl @Inject constructor(
 
     override suspend fun getProfileByUsername(username: String): Profile? {
         val usernameLower = username.trim().lowercase()
-        val document = usersCollection
+        val snapshot = usersCollection
             .whereEqualTo("usernameLower", usernameLower)
             .limit(1)
             .get()
@@ -38,7 +38,7 @@ class ProfilesRepositoryImpl @Inject constructor(
             .documents
             .firstOrNull()
             ?: return null
-        return document.toObject(ProfileDTO::class.java)?.toDomain(document.id)
+        return snapshot.toObject(ProfileDTO::class.java)?.toDomain(snapshot.id)
     }
 
     override suspend fun isUsernameAvailable(username: String): Boolean {
@@ -115,7 +115,7 @@ class ProfilesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteProfile(uid: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Delete profile is not implemented in MVP")
     }
 
     companion object {

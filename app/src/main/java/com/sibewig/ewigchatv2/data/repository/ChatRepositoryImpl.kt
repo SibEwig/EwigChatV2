@@ -19,17 +19,14 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
-    db: FirebaseFirestore,
-    auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    db: FirebaseFirestore
 ) : ChatRepository {
-
-    private val currentUser = auth.currentUser
 
     private val chatsCollection = db.collection(COLLECTION_CHATS)
 
     override suspend fun sendMessage(chatId: String, msg: String) {
-        val user = currentUser ?:
-            throw Exception("Current user is null")
+        val user = auth.currentUser ?: throw Exception("Current user is null")
 
         val currentServerTime = FieldValue.serverTimestamp()
 
@@ -91,21 +88,21 @@ class ChatRepositoryImpl @Inject constructor(
             .orderBy(CREATED_AT)
 
         val registration = query
-            .addSnapshotListener { snapshot, error -> 
+            .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    close(error) 
+                    close(error)
                     return@addSnapshotListener
                 }
 
-                val messages = snapshot 
+                val messages = snapshot
                     ?.toObjects(MessageDTO::class.java)
                     ?.map { it.toDomain(normalizedChatId) }
-                    .orEmpty() 
+                    .orEmpty()
 
-                trySend(messages) 
+                trySend(messages)
             }
 
-        awaitClose { registration.remove() } 
+        awaitClose { registration.remove() }
     }
 
     override suspend fun createDirectChat(
@@ -140,7 +137,6 @@ class ChatRepositoryImpl @Inject constructor(
         require(myUid != otherUid) { "Cannot find chat with yourself" }
 
         val normalizedChatId = normalizeChatId("$myUid$CHAT_ID_DELIMITER$otherUid")
-        Log.d("START_CHAT", "before findDirectChat")
         val snapshot = chatsCollection
             .document(normalizedChatId)
             .get()
@@ -149,7 +145,6 @@ class ChatRepositoryImpl @Inject constructor(
         if (!snapshot.exists()) return null
 
         val dto = snapshot.toObject(ChatDTO::class.java) ?: return null
-        Log.d("START_CHAT", "after findDirectChat: ${dto.toDomain(myUid)}")
         return dto.toDomain(myUid)
     }
 

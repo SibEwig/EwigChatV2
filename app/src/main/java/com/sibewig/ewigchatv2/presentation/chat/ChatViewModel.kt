@@ -109,7 +109,6 @@ class ChatViewModel @Inject constructor(
             )
         } else {
             emit(ChatState.Success(emptyList(), profileName))
-            Log.d("ChatViewModel", "Emitted empty list")
         }
     }
 

@@ -22,8 +22,10 @@ class AuthRepositoryImpl @Inject constructor(
                 trySend(AuthState.Unauthorized)
             } else {
                 user.reload().addOnCompleteListener {
-                    if (user.isEmailVerified) {
-                        trySend(AuthState.Authorized(user.uid))
+                    val refreshedUser = firebaseAuth.currentUser
+
+                    if (refreshedUser != null && refreshedUser.isEmailVerified) {
+                        trySend(AuthState.Authorized(refreshedUser.uid))
                     } else {
                         trySend(AuthState.Unauthorized)
                     }
@@ -32,20 +34,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
         auth.addAuthStateListener(listener)
-        val currentUser = auth.currentUser
-        trySend(
-            if (currentUser == null) {
-                AuthState.Unauthorized
-            } else {
-                AuthState.Authorized(currentUser.uid)
-            }
-        )
 
         awaitClose {
             auth.removeAuthStateListener(listener)
         }
-    }
-        .distinctUntilChanged()
+    }.distinctUntilChanged()
 
     override suspend fun getCurrentUserUid(): String? {
         return auth.currentUser?.uid

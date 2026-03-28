@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.setupWithNavController
 import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.databinding.ActivityMainBinding
@@ -87,27 +88,30 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.authState
                     .collect { authState ->
-                        Log.d("MainActivity", "Current state: $authState")
                         when (authState) {
                             is AuthState.Authorized -> {
                                 val destId = navController.currentDestination?.id
-                                if (destId == R.id.authFragment) {
-                                    val options = NavOptions.Builder()
-                                        .setPopUpTo(R.id.authFragment, true)
-                                        .setLaunchSingleTop(true)
-                                        .build()
-                                    navController.navigate(R.id.chatsFragment, null, options)
+                                if (destId != R.id.chatsFragment) {
+                                    navController.navigate(
+                                        R.id.chatsFragment,
+                                        null,
+                                        navOptions {
+                                            popUpTo(R.id.launchFragment) { inclusive = true }
+                                        }
+                                    )
                                 }
                             }
 
                             AuthState.Unauthorized -> {
                                 val destId = navController.currentDestination?.id
                                 if (destId != R.id.authFragment) {
-                                    val options = NavOptions.Builder()
-                                        .setPopUpTo(navController.graph.id, true)
-                                        .setLaunchSingleTop(true)
-                                        .build()
-                                    navController.navigate(R.id.authFragment, null, options)
+                                    navController.navigate(
+                                        R.id.authFragment,
+                                        null,
+                                        navOptions {
+                                            popUpTo(R.id.launchFragment) { inclusive = true }
+                                        }
+                                    )
                                 }
                             }
 
