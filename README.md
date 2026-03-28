@@ -22,7 +22,7 @@ Modern Android chat application built with Clean Architecture, MVVM and Firebase
 ## ✨ Features
 
 - Firebase Authentication (email/password + email verification)
-- Authentication via email or username
+- Authentication via email
 - Real-time chat using Cloud Firestore
 - One-to-one messaging
 - Username system with uniqueness check
@@ -72,6 +72,7 @@ Reactive data flow is implemented using Kotlin Flow and StateFlow.
 
 ## 🔮 Future Improvements
 
+- Authentication via username
 - Push notifications (FCM)
 - Online status and last seen
 - Message and chat deletion
