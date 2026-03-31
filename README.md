@@ -21,14 +21,36 @@ Modern Android chat application built with Clean Architecture, MVVM and Firebase
 
 ## ✨ Features
 
-- Firebase Authentication (email/password + email verification)
-- Authentication via email
-- Real-time chat using Cloud Firestore
-- One-to-one messaging
-- Username system with uniqueness check
-- Profile management
-- Reactive UI with Kotlin Flow
+### 🔐 Authentication
+- Firebase Authentication (email/password)
+- Email verification flow
+- Reactive auth state handling with Kotlin Flow
+
+### 💬 Chat
+- Real-time messaging using Cloud Firestore
+- One-to-one chats
+- Last message preview in chat list
+- Message ownership detection (incoming/outgoing)
+
+### 👤 Profile
+- Profile management with inline editing
+- Username system with transactional uniqueness check
+
+### 🧠 Architecture & State
 - Clean Architecture (data / domain / presentation)
+- MVVM pattern
+- Reactive UI with Kotlin Flow & StateFlow
+- Unidirectional data flow
+
+---
+
+## 💡 Highlights
+
+- Real-time updates via Firestore snapshot listeners + Flow
+- Auth state drives navigation
+- Username uniqueness implemented via transactional writes
+- In-memory caching for frequently accessed profile data
+- Edge-to-edge UI with proper IME and insets handling
 
 ---
 
@@ -49,13 +71,19 @@ Modern Android chat application built with Clean Architecture, MVVM and Firebase
 
 ## 🏗 Architecture
 
-The project follows Clean Architecture principles:
+The project follows Clean Architecture principles with clear separation of concerns:
 
-- **data layer** — repositories, Firebase integration, DTOs
+- **data layer** — repository implementations, Firebase integration, DTOs, mappers
 - **domain layer** — use cases and business logic
-- **presentation layer** — ViewModels and UI
+- **presentation layer** — ViewModels, UI state, and screens
 
-Reactive data flow is implemented using Kotlin Flow and StateFlow.
+Reactive data flow is built with Kotlin Flow and StateFlow:
+
+- UI subscribes to StateFlow from ViewModel
+- ViewModel combines multiple data sources using Flow operators
+- Repository exposes cold flows backed by Firebase listeners
+
+The app follows a unidirectional data flow approach for predictable state management.
 
 ---
 
@@ -70,18 +98,35 @@ Reactive data flow is implemented using Kotlin Flow and StateFlow.
 
 ---
 
-## 🔮 Future Improvements
+## 🚧 In Progress
+
+- App settings (theme: light / dark / system)
+- Localization (EN / RU)
+- DataStore-based settings persistence
+- UI polishing (chat list, message input, consistency)
+- Viewing interlocutor profile from chat
+
+---
+
+## 🔮 Planned
 
 - Authentication via username
+- User avatar upload & management
+- Offline-first support (Room + WorkManager)
+- Message sending states (sending / sent / failed)
+- Instant UI loading via local cache
+
+---
+
+## 🌌 Future Ideas
+
+- Online status & last seen
 - Push notifications (FCM)
-- Online status and last seen
 - Message and chat deletion
-- Theme switching (dark / light / system)
-- Localization (EN / RU)
-- User avatar upload and management
 
 ---
 
 ## 📌 Status
 
-MVP (Minimum Viable Product) — actively in development
+🚧 Evolving from MVP towards a production-ready architecture  
+Currently focused on UX polish, settings, and offline-first improvements
