@@ -22,4 +22,11 @@
     <string name="button_save">Save</string>
     <string name="button_cancel">Cancel</string>
     <string name="hint_about">A little about you — or whatever’s on your mind</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_english">English</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="label_language">Language:</string>
+    <string name="label_theme">Theme:</string>
 </resources>

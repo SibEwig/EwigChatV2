@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.firebase.firestore)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation(libs.androidx.datastore.preferences)
 }
 
 kapt {
