@@ -3,6 +3,7 @@ package com.sibewig.ewigchatv2.presentation.chats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Chat
 import com.sibewig.ewigchatv2.domain.exceptions.CannotStartChatWithYourselfException
@@ -50,8 +51,7 @@ class ChatsViewModel @Inject constructor(
                     .map<List<Chat>, ChatsState> { chats ->
                         val chatUiList = chats.map { chat ->
                             val interlocutorName = try {
-                                getProfileByUidUseCase(chat.interlocutorId)?.displayName
-                                    ?: "Unknown name"
+                                getProfileByUidUseCase(chat.interlocutorId)?.displayName ?: "Unknown name"
                             } catch (e: Exception) {
                                 "Unknown name"
                             }
@@ -66,11 +66,11 @@ class ChatsViewModel @Inject constructor(
                     .onStart { emit(ChatsState.Loading) }
                     .catch {e ->
                         if (e is CancellationException) throw e
-                        emit(ChatsState.Error(e.toUserMessage()))
+                        emit(ChatsState.Error(e.toUserMessageRes()))
                     }
             }
 
-            else -> flowOf(ChatsState.Error("Not authorized"))
+            else -> flowOf(ChatsState.Error(R.string.error_not_authorized))
         }
     }.stateIn(
         scope = viewModelScope,
@@ -84,18 +84,28 @@ class ChatsViewModel @Inject constructor(
                 val chatId = resolveDirectChatIdUseCase(username)
                 _events.emit(ChatsEvent.OpenChat(chatId))
             } catch (e: Exception) {
-                _events.emit(ChatsEvent.ShowStartChatError(e.toUserMessage()))
+                _events.emit(ChatsEvent.ShowStartChatError(e.toUserMessageRes()))
             }
         }
     }
 
-    private fun Throwable.toUserMessage(): String {
+    private fun Throwable.toUserMessageRes(): Int {
         return when (this) {
-            is ProfileNotFoundException -> "Пользователь не найден"
-            is CannotStartChatWithYourselfException -> "Нельзя начать чат с самим собой"
-            is UnauthorizedException -> "Сессия истекла. Войдите снова"
-            is FirebaseFirestoreException -> "Не удалось загрузить чаты"
-            else -> "Произошла ошибка"
+
+            is ProfileNotFoundException ->
+                R.string.error_user_not_found
+
+            is CannotStartChatWithYourselfException ->
+                R.string.error_chat_self
+
+            is UnauthorizedException ->
+                R.string.error_session_expired
+
+            is FirebaseFirestoreException ->
+                R.string.error_chats_load_failed
+
+            else ->
+                R.string.error_generic
         }
     }
 

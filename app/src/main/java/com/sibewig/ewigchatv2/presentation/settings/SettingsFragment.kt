@@ -58,6 +58,12 @@ class SettingsFragment : Fragment() {
         binding.buttonLogout.setOnClickListener {
             viewModel.onLogout()
         }
+        binding.imageViewLanguageArrow.setOnClickListener {
+            binding.spinnerLanguage.performClick()
+        }
+        binding.imageViewThemeArrow.setOnClickListener {
+            binding.spinnerTheme.performClick()
+        }
     }
 
     private fun setupLanguageSpinner() {

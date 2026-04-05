@@ -46,7 +46,13 @@ class SettingsRepositoryImpl @Inject constructor(
     }
 
     private object PreferencesKeys {
-        val THEME_MODE = stringPreferencesKey("theme_mode")
-        val APP_LANGUAGE = stringPreferencesKey("app_language")
+        val THEME_MODE = stringPreferencesKey(KEY_THEME_MODE)
+        val APP_LANGUAGE = stringPreferencesKey(KEY_APP_LANGUAGE)
+    }
+
+    companion object {
+
+        private const val KEY_THEME_MODE = "theme_mode"
+        private const val KEY_APP_LANGUAGE = "app_language"
     }
 }

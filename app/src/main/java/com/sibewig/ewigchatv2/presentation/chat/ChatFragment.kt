@@ -88,7 +88,7 @@ class ChatFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
-                                state.msg,
+                                state.msgRes,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

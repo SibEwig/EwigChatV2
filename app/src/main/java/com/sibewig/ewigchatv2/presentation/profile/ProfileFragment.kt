@@ -79,7 +79,7 @@ class ProfileFragment : Fragment() {
                         is ProfileEvent.ShowError -> {
                             Toast.makeText(
                                 requireContext(),
-                                event.msg,
+                                event.msgRes,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

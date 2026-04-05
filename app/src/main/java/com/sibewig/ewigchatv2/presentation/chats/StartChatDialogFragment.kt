@@ -49,7 +49,7 @@ class StartChatDialogFragment : DialogFragment() {
                 viewModel.events.collect { event ->
                     when (event) {
                         is ChatsEvent.ShowStartChatError -> {
-                            binding.usernameInputLayout.error = event.message
+                            binding.usernameInputLayout.error = getString(event.messageRes)
                         }
 
                         else -> {

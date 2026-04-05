@@ -1,4 +1,4 @@
-package com.sibewig.ewigchatv2.data
+package com.sibewig.ewigchatv2.data.mapper
 
 import com.sibewig.ewigchatv2.data.model.MessageDTO
 import com.sibewig.ewigchatv2.domain.entity.Message

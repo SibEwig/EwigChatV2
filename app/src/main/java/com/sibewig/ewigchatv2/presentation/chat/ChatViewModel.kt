@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.entity.Message
 import com.sibewig.ewigchatv2.domain.usecases.DoesChatExistUseCase
@@ -73,12 +74,12 @@ class ChatViewModel @Inject constructor(
                             .onStart { emit(ChatState.Loading) }
                             .catch { e ->
                                 if (e is CancellationException) throw e
-                                emit(ChatState.Error(e.toChatErrorMessage()))
+                                emit(ChatState.Error(e.toChatErrorMessageRes()))
                             }
 
                     }
 
-                    else -> flowOf(ChatState.Error("Not authorized"))
+                    else -> flowOf(ChatState.Error(R.string.error_not_authorized))
                 }
             }.stateIn(
                 scope = viewModelScope,
@@ -92,7 +93,7 @@ class ChatViewModel @Inject constructor(
     ): Flow<ChatState> = flow {
         val profileId = extractInterlocutorId(myUid)
         if (profileId == null) {
-            emit(ChatState.Error("Bad ChatId"))
+            emit(ChatState.Error(R.string.error_chat_invalid_id))
             return@flow
         }
         val profileName = getProfileByUidUseCase(profileId)?.displayName.orEmpty()
@@ -128,20 +129,21 @@ class ChatViewModel @Inject constructor(
         )
     }
 
-    private fun Throwable.toChatErrorMessage(): String {
+    private fun Throwable.toChatErrorMessageRes(): Int {
         return when (this) {
             is FirebaseFirestoreException -> when (code) {
+
                 FirebaseFirestoreException.Code.PERMISSION_DENIED ->
-                    "Нет доступа к чату"
+                    R.string.error_chat_permission_denied
 
                 FirebaseFirestoreException.Code.UNAVAILABLE ->
-                    "Не удалось подключиться к серверу"
+                    R.string.error_chat_unavailable
 
                 else ->
-                    "Не удалось загрузить сообщения"
+                    R.string.error_chat_load_failed
             }
 
-            else -> "Произошла ошибка при загрузке чата"
+            else -> R.string.error_chat_generic
         }
     }
 

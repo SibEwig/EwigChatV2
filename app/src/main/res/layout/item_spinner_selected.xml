@@ -10,10 +10,11 @@
     android:includeFontPadding="false"
     android:maxLines="1"
     android:minHeight="32dp"
+    android:textAlignment="viewEnd"
     android:paddingStart="8dp"
     android:paddingTop="4dp"
-    android:paddingEnd="28dp"
-    tools:text="Item1"
+    android:paddingEnd="8dp"
     android:paddingBottom="4dp"
     android:textColor="?attr/colorOnSurfaceVariant"
-    android:textSize="18sp" />
+    android:textSize="18sp"
+    tools:text="Item1" />

@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
                     when (authState) {
                         is AuthState.Authorized -> {
-                            if (destId.isUnauthorizedDestination()) {
+                            if (destId.shouldNavigateToAuthorized()) {
                                 navController.navigate(
                                     R.id.chatsFragment,
                                     null,
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         AuthState.Unauthorized -> {
-                            if (destId.isAuthorizedDestination()) {
+                            if (destId.shouldNavigateToUnauthorized()) {
                                 navController.navigate(
                                     R.id.authFragment,
                                     null,
@@ -131,14 +131,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun Int?.isAuthorizedDestination(): Boolean {
+    private fun Int?.shouldNavigateToUnauthorized(): Boolean {
         return this == R.id.chatsFragment ||
                 this == R.id.chatFragment ||
                 this == R.id.profileFragment ||
-                this == R.id.settingsFragment
+                this == R.id.settingsFragment ||
+                this == R.id.launchFragment
     }
 
-    private fun Int?.isUnauthorizedDestination(): Boolean {
+    private fun Int?.shouldNavigateToAuthorized(): Boolean {
         return this == R.id.launchFragment ||
                 this == R.id.authFragment ||
                 this == R.id.registrationFragment

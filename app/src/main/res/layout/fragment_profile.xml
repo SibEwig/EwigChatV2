@@ -42,14 +42,13 @@
                 android:layout_width="220dp"
                 android:layout_height="220dp"
                 android:background="@drawable/bg_avatar_circle"
-                android:contentDescription="@string/avatar_image"
+                android:contentDescription="@string/cd_avatar_image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/hedgehog_3506930"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="?attr/colorOnSurface"
-                tools:ignore="ImageContrastCheck" />
+                app:tint="?attr/colorOnSurface" />
 
             <EditText
                 android:id="@+id/editTextDisplayName"
@@ -61,6 +60,7 @@
                 android:fontFamily="@font/manrope_medium"
                 android:gravity="center"
                 android:includeFontPadding="false"
+                android:inputType="textPersonName"
                 android:padding="4dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="28sp"

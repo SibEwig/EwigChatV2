@@ -21,7 +21,7 @@
             android:layout_height="58dp"
             android:scaleType="centerCrop"
             android:background="@drawable/bg_avatar_circle"
-            android:contentDescription="@string/avatar"
+            android:contentDescription="@string/cd_avatar"
             android:src="@drawable/hedgehog_3506930"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

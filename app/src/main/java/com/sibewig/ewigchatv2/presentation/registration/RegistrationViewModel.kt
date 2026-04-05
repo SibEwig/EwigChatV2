@@ -1,9 +1,11 @@
 package com.sibewig.ewigchatv2.presentation.registration
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.domain.exceptions.UsernameIsTakenException
 import com.sibewig.ewigchatv2.domain.usecases.RegisterUseCase
 import com.sibewig.ewigchatv2.presentation.registration.model.RegistrationState
@@ -77,35 +79,35 @@ class RegistrationViewModel @Inject constructor(
         displayName: String
     ): RegistrationState.InputError? {
 
-        val usernameError = if (username.isBlank()) ERROR_USERNAME_BLANK
-        else if (!isUsernameValid(username)) ERROR_USERNAME_INVALID
+        val usernameError = if (username.isBlank()) R.string.error_username_blank
+        else if (!isUsernameValid(username)) R.string.error_username_invalid
         else null
 
-        val emailError = if (email.isBlank()) ERROR_EMAIL_BLANK
-        else if (!email.contains("@")) ERROR_EMAIL_INVALID
+        val emailError = if (email.isBlank()) R.string.error_email_blank
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) R.string.error_email_invalid
         else null
 
-        val passwordError = if (password.isBlank()) ERROR_PASSWORD_BLANK
-        else if (password.length < 6) ERROR_PASSWORD_WEAK
+        val passwordError = if (password.isBlank()) R.string.error_password_blank
+        else if (password.length < 6) R.string.error_password_weak
         else null
 
-        val repeatPasswordError = if (repeatPassword.isBlank()) ERROR_REPEAT_PASSWORD_BLANK
-        else if (repeatPassword != password) ERROR_PASSWORD_MISMATCH
+        val repeatPasswordError = if (repeatPassword.isBlank()) R.string.error_repeat_password_blank
+        else if (repeatPassword != password) R.string.error_password_mismatch
         else null
 
-        val displayNameError = if (displayName.isBlank()) ERROR_DISPLAY_NAME_BLANK
-        else if (displayName.length !in DISPLAY_NAME_LENGTH_RANGE) ERROR_DISPLAY_NAME_LENGTH
+        val displayNameError = if (displayName.isBlank()) R.string.error_display_name_blank
+        else if (displayName.length !in DISPLAY_NAME_LENGTH_RANGE) R.string.error_display_name_length
         else null
 
-        return if (usernameError == null && emailError == null && passwordError == null && repeatPasswordError == null
-            && displayNameError == null
+        return if (usernameError == null && emailError == null && passwordError == null &&
+            repeatPasswordError == null && displayNameError == null
         ) null
         else RegistrationState.InputError(
-            usernameError = usernameError,
-            emailError = emailError,
-            passwordError = passwordError,
-            repeatPasswordError = repeatPasswordError,
-            displayNameError = displayNameError
+            usernameErrorRes = usernameError,
+            emailErrorRes = emailError,
+            passwordErrorRes = passwordError,
+            repeatPasswordErrorRes = repeatPasswordError,
+            displayNameErrorRes = displayNameError
         )
     }
 
@@ -118,31 +120,22 @@ class RegistrationViewModel @Inject constructor(
         } && username.length in USERNAME_LENGTH_RANGE
     }
 
-    private fun mapAuthError(e: Exception): String = when (e) {
+    private fun mapAuthError(e: Exception): Int = when (e) {
 
         is FirebaseAuthUserCollisionException ->
-            "Этот email уже зарегистрирован"
+            R.string.error_auth_email_taken
 
         is FirebaseNetworkException ->
-            "Проблема с сетью. Проверьте интернет"
+            R.string.error_network
 
-        is UsernameIsTakenException -> "Имя пользователя занято"
+        is UsernameIsTakenException ->
+            R.string.error_username_taken
 
-        else -> "Не удалось выполнить регистрацию. Попробуйте ещё раз"
+        else ->
+            R.string.error_auth_register_failed
     }
 
     companion object {
-
-        private const val ERROR_EMAIL_BLANK = "Email не может быть пустым"
-        private const val ERROR_EMAIL_INVALID = "Введите корректный email"
-        private const val ERROR_PASSWORD_BLANK = "Пароль не может быть пустым"
-        private const val ERROR_PASSWORD_WEAK = "Слабый пароль (мин. 6 символов)"
-        private const val ERROR_REPEAT_PASSWORD_BLANK = "Повторите пароль"
-        private const val ERROR_PASSWORD_MISMATCH = "Пароли не совпадают"
-        private const val ERROR_DISPLAY_NAME_BLANK = "Имя не может быть пустым"
-        private const val ERROR_DISPLAY_NAME_LENGTH = "От 3 до 25 символов"
-        private const val ERROR_USERNAME_BLANK = "Имя пользователя не может быть пустым"
-        private const val ERROR_USERNAME_INVALID = "От 3 до 20 символов: латиница, цифры и _"
 
         private val USERNAME_LENGTH_RANGE = 3..20
         private val DISPLAY_NAME_LENGTH_RANGE = 3..25

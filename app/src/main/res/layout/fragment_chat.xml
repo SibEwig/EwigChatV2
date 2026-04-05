@@ -79,7 +79,7 @@
                 android:id="@+id/messageInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/enter_message"
+                android:hint="@string/hint_message"
                 app:boxBackgroundMode="outline"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"

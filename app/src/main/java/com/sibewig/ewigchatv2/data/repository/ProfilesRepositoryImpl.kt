@@ -4,7 +4,18 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.sibewig.ewigchatv2.data.model.ProfileDTO
-import com.sibewig.ewigchatv2.data.toDomain
+import com.sibewig.ewigchatv2.data.mapper.toDomain
+import com.sibewig.ewigchatv2.data.remote.firestore.FirestoreCollections.USERNAMES
+import com.sibewig.ewigchatv2.data.remote.firestore.FirestoreCollections.USERS
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.ABOUT
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.CREATED_AT
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.DISPLAY_NAME
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.EMAIL
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.LAST_SEEN
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.PHOTO_URL
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.UID
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.USERNAME
+import com.sibewig.ewigchatv2.data.remote.firestore.UserFields.USERNAME_LOWER
 import com.sibewig.ewigchatv2.domain.entity.Profile
 import com.sibewig.ewigchatv2.domain.exceptions.UsernameIsTakenException
 import com.sibewig.ewigchatv2.domain.repository.ProfilesRepository
@@ -15,8 +26,8 @@ class ProfilesRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore
 ) : ProfilesRepository {
 
-    private val usersCollection = db.collection(COLLECTION_USERS)
-    private val usernamesCollection = db.collection(COLLECTION_USERNAMES)
+    private val usersCollection = db.collection(USERS)
+    private val usernamesCollection = db.collection(USERNAMES)
     private val cache = mutableMapOf<String, Profile>()
 
     override suspend fun getProfileByUid(uid: String): Profile? {
@@ -31,7 +42,7 @@ class ProfilesRepositoryImpl @Inject constructor(
     override suspend fun getProfileByUsername(username: String): Profile? {
         val usernameLower = username.trim().lowercase()
         val snapshot = usersCollection
-            .whereEqualTo("usernameLower", usernameLower)
+            .whereEqualTo(USERNAME_LOWER, usernameLower)
             .limit(1)
             .get()
             .await()
@@ -106,8 +117,8 @@ class ProfilesRepositoryImpl @Inject constructor(
             .document(profile.id)
             .update(
                 mapOf(
-                    "displayName" to profile.displayName,
-                    "about" to profile.about
+                    DISPLAY_NAME to profile.displayName,
+                    ABOUT to profile.about
                 )
             )
             .await()
@@ -115,21 +126,13 @@ class ProfilesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteProfile(uid: String) {
-        throw UnsupportedOperationException("Delete profile is not implemented in MVP")
+        throw UnsupportedOperationException(ERROR_DELETE_PROFILE_NOT_IMPLEMENTED)
     }
 
     companion object {
 
-        private const val EMAIL = "email"
-        private const val UID = "uid"
-        private const val DISPLAY_NAME = "displayName"
-        private const val PHOTO_URL = "photoUrl"
-        private const val CREATED_AT = "createdAt"
-        private const val LAST_SEEN = "lastSeen"
-        private const val USERNAME = "username"
-        private const val USERNAME_LOWER = "usernameLower"
-        private const val COLLECTION_USERS = "users"
-        private const val COLLECTION_USERNAMES = "usernames"
+        private const val ERROR_DELETE_PROFILE_NOT_IMPLEMENTED =
+            "Delete profile is not implemented in MVP"
 
     }
 }

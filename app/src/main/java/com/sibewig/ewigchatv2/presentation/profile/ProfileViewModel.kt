@@ -2,6 +2,7 @@ package com.sibewig.ewigchatv2.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.domain.AuthState
 import com.sibewig.ewigchatv2.domain.usecases.GetAuthStateUseCase
 import com.sibewig.ewigchatv2.domain.usecases.GetProfileByUidUseCase
@@ -42,18 +43,30 @@ class ProfileViewModel @Inject constructor(
                         try {
                             val profile = getProfileByUidUseCase(state.userID)
                             if (profile == null) {
-                                _events.emit(ProfileEvent.ShowError(ERROR_LOAD_PROFILE))
+                                _events.emit(
+                                    ProfileEvent.ShowError(
+                                        R.string.error_profile_load_failed
+                                    )
+                                )
                                 return@collect
                             }
                             _state.emit(ProfileState(profile = profile))
                         } catch (e: Exception) {
                             if (e is CancellationException) throw e
-                            _events.emit(ProfileEvent.ShowError(ERROR_LOAD_PROFILE))
+                            _events.emit(
+                                ProfileEvent.ShowError(
+                                    R.string.error_profile_load_failed
+                                )
+                            )
                         }
                     }
 
                     AuthState.Unauthorized -> {
-                        _events.emit(ProfileEvent.ShowError(ERROR_NOT_AUTHORIZED))
+                        _events.emit(
+                            ProfileEvent.ShowError(
+                                R.string.error_not_authorized
+                            )
+                        )
                     }
 
                     AuthState.Initial -> Unit
@@ -63,7 +76,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onEdit() {
-            _state.value = state.value.copy(isEditMode = true)
+        _state.value = state.value.copy(isEditMode = true)
     }
 
     fun onDiscardChanges() {
@@ -75,7 +88,8 @@ class ProfileViewModel @Inject constructor(
         about: String
     ) {
         if (_state.value.profile?.displayName == displayName &&
-             _state.value.profile?.about == about) {
+            _state.value.profile?.about == about
+        ) {
             _state.value = _state.value.copy(isEditMode = false)
             return
         }
@@ -91,16 +105,9 @@ class ProfileViewModel @Inject constructor(
                 _state.emit(ProfileState(profile = editedProfile))
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
-                _events.emit(ProfileEvent.ShowError(ERROR_EDIT_PROFILE))
+                _events.emit(ProfileEvent.ShowError(R.string.error_profile_edit_failed))
                 _state.emit(ProfileState(profile = profile))
             }
         }
-    }
-
-    companion object {
-
-        private const val ERROR_LOAD_PROFILE = "Не удалось загрузить профиль"
-        private const val ERROR_EDIT_PROFILE = "Не удалось отредактировать профиль"
-        private const val ERROR_NOT_AUTHORIZED = "Не авторизован"
     }
 }

@@ -4,16 +4,16 @@
     <item
         android:id="@+id/chatsFragment"
         android:icon="@drawable/outline_chat_24"
-        android:title="Chats" />
+        android:title="@string/nav_chats" />
 
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/outline_person_24"
-        android:title="Profile" />
+        android:title="@string/nav_profile" />
 
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/outline_settings_24"
-        android:title="Settings" />
+        android:title="@string/nav_settings" />
 
 </menu>

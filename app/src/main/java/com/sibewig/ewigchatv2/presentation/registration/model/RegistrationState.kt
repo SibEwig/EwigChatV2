@@ -9,12 +9,12 @@ sealed class RegistrationState {
     data class Success(val email: String) : RegistrationState()
 
     data class InputError(
-        val usernameError: String? = null,
-        val emailError: String? = null,
-        val passwordError: String? = null,
-        val repeatPasswordError: String? = null,
-        val displayNameError: String? = null
+        val usernameErrorRes: Int? = null,
+        val emailErrorRes: Int? = null,
+        val passwordErrorRes: Int? = null,
+        val repeatPasswordErrorRes: Int? = null,
+        val displayNameErrorRes: Int? = null
     ) : RegistrationState()
 
-    data class Error(val error: String) : RegistrationState()
+    data class Error(val errorRes: Int) : RegistrationState()
 }

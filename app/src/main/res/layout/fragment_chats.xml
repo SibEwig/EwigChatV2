@@ -27,7 +27,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="112dp"
         android:backgroundTint="#DDD9E8"
-        android:contentDescription="@string/cd_send_message"
+        android:contentDescription="@string/cd_start_chat"
         android:text=""
         app:cornerRadius="24dp"
         app:elevation="16dp"

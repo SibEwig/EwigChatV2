@@ -1,6 +1,8 @@
 package com.sibewig.ewigchatv2.presentation.auth
 
+import androidx.annotation.StringRes
+
 data class AuthScreenState(
     val isLoading: Boolean = false,
-    val error: String? = null
+    @StringRes val errorRes: Int? = null
 )

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import com.sibewig.ewigchatv2.R
 import com.sibewig.ewigchatv2.databinding.FragmentRegistrationBinding
 import com.sibewig.ewigchatv2.presentation.registration.model.RegistrationState
@@ -59,7 +61,7 @@ class RegistrationFragment : Fragment() {
                             is RegistrationState.Error -> {
                                 progressBar.visibility = View.GONE
                                 buttonRegister.isEnabled = true
-                                textViewError.text = state.error
+                                textViewError.text = getString(state.errorRes)
                                 textViewError.visibility = View.VISIBLE
                             }
                             is RegistrationState.InputError -> {
@@ -67,16 +69,16 @@ class RegistrationFragment : Fragment() {
                                 unlockOnNextEdit = true
                                 progressBar.visibility = View.GONE
 
-                                usernameInputLayout.error = state.usernameError
-                                emailInputLayout.error = state.emailError
-                                passwordInputLayout.error = state.passwordError
-                                repeatPasswordInputLayout.error = state.repeatPasswordError
-                                displayNameInputLayout.error = state.displayNameError
+                                usernameInputLayout.setErrorRes(state.usernameErrorRes)
+                                emailInputLayout.setErrorRes(state.emailErrorRes)
+                                passwordInputLayout.setErrorRes(state.passwordErrorRes)
+                                repeatPasswordInputLayout.setErrorRes(state.repeatPasswordErrorRes)
+                                displayNameInputLayout.setErrorRes(state.displayNameErrorRes)
                             }
                             is RegistrationState.Success -> {
                                 Toast.makeText(
                                     requireContext(),
-                                    getString(R.string.confirm_registration),
+                                    getString(R.string.toast_confirm_registration),
                                     Toast.LENGTH_LONG
                                 ).show()
                                 val navController = findNavController()
@@ -147,6 +149,10 @@ class RegistrationFragment : Fragment() {
             }
 
         }
+    }
+
+    private fun TextInputLayout.setErrorRes(@StringRes resId: Int?) {
+        error = resId?.let { context.getString(it) }
     }
 
     companion object {
