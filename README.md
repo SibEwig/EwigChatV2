@@ -105,9 +105,6 @@ The app follows a unidirectional data flow approach for predictable state manage
 
 ## 🚧 In Progress
 
-- App settings (theme: light / dark / system)
-- Localization (EN / RU)
-- DataStore-based settings persistence
 - UI polishing (chat list, message input, consistency)
 - Viewing interlocutor profile from chat
 
