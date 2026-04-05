@@ -36,6 +36,11 @@ Modern Android chat application built with Clean Architecture, MVVM and Firebase
 - Profile management with inline editing
 - Username system with transactional uniqueness check
 
+### ⚙️ Settings
+- Light / dark / system theme support
+- English / Russian localization
+- DataStore-based settings persistence
+
 ### 🧠 Architecture & State
 - Clean Architecture (data / domain / presentation)
 - MVVM pattern
